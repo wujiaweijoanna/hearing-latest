@@ -41,7 +41,6 @@ const ScreeningTest = () => {
     console.log('Playing tone:', frequency, 'Hz at', dB, 'dB');
     console.log('AudioContext state:', audioContext.state);
 
-    
     if (audioContext.state === 'suspended') {
       await audioContext.resume();
     }
@@ -54,27 +53,29 @@ const ScreeningTest = () => {
     
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
+    const panner = audioContext.createStereoPanner();
     
     oscillator.type = 'sine';
     oscillator.frequency.value = frequency;
     gainNode.gain.value = 0.2;
+
+    panner.pan.value = currentEar === 'right' ? 1 : -1;
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.start();
+    gainNode.connect(panner);
+    panner.connect(audioContext.destination);
     
     // Apply a slight fade in/out to avoid clicks
+    const now = audioContext.currentTime
     gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(amplitude, audioContext.currentTime + 0.05);
-    gainNode.gain.setValueAtTime(amplitude, audioContext.currentTime + duration - 0.05);
-    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
+    gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.05);
+    gainNode.gain.setValueAtTime(amplitude, now + duration - 0.05);
+    gainNode.gain.linearRampToValueAtTime(0, now + duration);
     
-    setTimeout(() => {
-      oscillator.stop();
-      setIsPlaying(false);
-    }, duration * 1000);
-  }, [audioContext]);
+    oscillator.start(now);
+    oscillator.stop(now + duration);
+    oscillator.onended = () => setIsPlaying(false);
+  }, [audioContext, currentEar]);
 
   // Start the test with a familiarization tone
   const startTest = () => {
