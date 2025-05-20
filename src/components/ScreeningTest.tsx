@@ -134,9 +134,9 @@ const ScreeningTest = () => {
       }
     } else if (currentDb === 20) {
       // Failed at screening level - move to threshold mode
-      setResponseStatus('failed');
       setCurrentDb(25); // Start threshold mode at 25 dB
       setCurrentAttempt(0);
+      setResponseStatus('waiting');
     } else {
       // In threshold mode - increase by 5dB and try again
       setCurrentDb(prev => prev + 5);
@@ -173,15 +173,6 @@ const ScreeningTest = () => {
     setCurrentPhase('results');
     toast.success('Testing complete. Viewing results...');
   };
-
-  // Check if we need to enter threshold testing for a frequency that failed
-  useEffect(() => {
-    if (responseStatus === 'failed' && currentDb === 20) {
-      toast.info('Moving to threshold testing for this frequency');
-      setCurrentDb(25);
-      setCurrentAttempt(0);
-    }
-  }, [responseStatus, currentDb]);
 
   // Calculate total test time
   const getTestDuration = () => {
