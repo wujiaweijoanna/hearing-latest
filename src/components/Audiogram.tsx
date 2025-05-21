@@ -21,6 +21,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
   currentFrequency,
   showCurrent = false
 }) => {
+  console.log('results:', results)
   // Audiogram configuration
   const frequencies = [1000, 2000, 4000];
   const dbLevels = [0, 10, 20, 30, 40, 50, 60, 70, 80];
@@ -32,20 +33,19 @@ const Audiogram: React.FC<AudiogramProps> = ({
   };
   
   const getPositionY = (db: number) => {
-    const index = dbLevels.indexOf(db);
-    if (index === -1) {
-      // Find the closest db level
-      const closestDb = dbLevels.reduce((prev, curr) => 
-        Math.abs(curr - db) < Math.abs(prev - db) ? curr : prev
-      );
-      const closestIndex = dbLevels.indexOf(closestDb);
-      return (closestIndex / (dbLevels.length - 1)) * 100;
-    }
-    return (index / (dbLevels.length - 1)) * 100;
-  };
+    const minDb = dbLevels[0];
+    const maxDb = dbLevels[dbLevels.length - 1];
+    
+    // Clamp db within range
+    const clampedDb = Math.max(minDb, Math.min(db, maxDb));
   
+    // Y increases as dB increases (worse hearing = lower on graph)
+    const percentage = (clampedDb - minDb) / (maxDb - minDb);
+    return percentage * 100;
+  };
+    
   return (
-    <div className="bg-white rounded-lg border overflow-hidden">
+    <div className="bg-white rounded-lg border overflow-hidden p-4">
       <div className="p-2 bg-medical-blue-light text-xs font-medium text-center text-medical-blue">
         <span className="inline-block mr-4">
           ● Right Ear (Blue)
@@ -54,9 +54,9 @@ const Audiogram: React.FC<AudiogramProps> = ({
           ● Left Ear (Green)
         </span>
       </div>
-      <div className="p-4 relative audiogram-grid">
+      <div className="relative audiogram-grid">
         {/* Frequency labels across the top */}
-        <div className="absolute -top-6 left-0 w-full flex justify-between px-3">
+        <div className="absolute -top-5 left-0 w-full flex justify-between pr-6 pl-2">
           {frequencies.map(freq => (
             <span key={freq} className="text-xs text-gray-600">
               {freq} Hz
@@ -65,7 +65,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
         </div>
         
         {/* dB labels down the left side */}
-        <div className="absolute top-0 -left-8 h-full flex flex-col justify-between">
+        <div className="absolute top-0 -left-0 h-full flex flex-col justify-between pr-2 text-right">
           {dbLevels.map(db => (
             <span key={db} className="text-xs text-gray-600">
               {db} dB
