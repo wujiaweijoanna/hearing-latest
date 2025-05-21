@@ -46,28 +46,54 @@ const Audiogram: React.FC<AudiogramProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border overflow-hidden p-4">
+    <div className="bg-white rounded-lg border overflow-hidden px-8 pt-10 pb-4 mt-4">
       <div
         ref={containerRef} // 🔧 CHANGED
         className="relative audiogram-grid h-[300px]" // 🔧 CHANGED: Fixed height for calculation
       >
         {/* Frequency labels across the top */}
-        <div className="absolute -top-5 left-0 w-full flex justify-between pr-6 pl-2">
-          {frequencies.map(freq => (
-            <span key={freq} className="text-xs text-gray-600">
-              {freq} Hz
+        <div className="absolute top-[-18px] left-0 w-full">
+          {frequencies.map((freq, index) => (
+            <span
+              key={freq}
+              className="absolute text-xs text-gray-600"
+              style={{
+                left: `${(index / (frequencies.length - 1)) * 100}%`,
+                transform: 'translateX(-50%)',
+              }}
+            >
+              {freq}{freq === 2000 ? ' Hz' : ''}
             </span>
           ))}
         </div>
 
         {/* dB labels down the left side */}
-        <div className="absolute top-0 -left-0 h-full flex flex-col justify-between pr-2 text-right">
-          {dbLevels.map(db => (
-            <span key={db} className="text-xs text-gray-600">
-              {db} dB
-            </span>
-          ))}
+        <div className="absolute left-[-25px] top-0 w-8">
+          {dbLevels.map((db) => {
+            const y = getPositionY(db); // 💡 Use the same Y positioning as grid lines
+
+            return (
+              <div
+                key={db}
+                className="absolute text-xs text-gray-600 text-right leading-tight"
+                style={{
+                  top: `${y}px`,
+                  transform: 'translateY(-50%)',
+                }}
+              >
+                {db === 80 ? (
+                  <>
+                    <div>{db}</div>
+                    <div>dB</div>
+                  </>
+                ) : (
+                  db
+                )}
+              </div>
+            );
+          })}
         </div>
+
 
         {/* Vertical and horizontal grid lines */}
         {frequencies.map((freq, index) => (
