@@ -143,7 +143,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
 
             const points = earResults.map(r => {
               const x = getPositionX(r.frequency);
-              const y = getPositionY(r.threshold + (ear === 'left' ? 1.5 : 0));
+              const y = getPositionY(r.threshold);
               return `${x},${y}`;
             });
 
@@ -163,7 +163,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
         {results.map((result, index) => {
           const isRight = result.ear === 'right';
           const x = getPositionX(result.frequency);
-          const y = getPositionY(result.threshold + (isRight ? 0 : 1.5)); // offset left ear slightly
+          const y = getPositionY(result.threshold); // offset left ear slightly
 
           return (
             <div
