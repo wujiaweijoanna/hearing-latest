@@ -115,24 +115,16 @@ const ScreeningTest = () => {
   const recordResponse = (heard: boolean) => {
     if (heard) {
       setResponseStatus('responded');
-      
-      // Record threshold in threshold mode (when dB is not 20)
-      if (currentDb !== 20) {
-        // In threshold mode, record this threshold and continue
-        addThresholdResult({
-          ear: currentEar,
-          frequency: currentFrequency as 1000 | 2000 | 4000,
-          threshold: currentDb,
-          passed: currentDb <= 20
-        });
+      addThresholdResult({
+        ear: currentEar,
+        frequency: currentFrequency as 1000 | 2000 | 4000,
+        threshold: currentDb,
+        passed: currentDb <= 20
+      });
         
-        // Go back to screening mode for the next frequency
-        setCurrentDb(20);
-        moveToNextFrequency();
-      } else {
-        // In regular screening mode
-        moveToNextFrequency();
-      }
+      // Go back to screening mode for the next frequency
+      setCurrentDb(20);
+      moveToNextFrequency();
     } else if (currentDb === 20) {
       // Failed at screening level - move to threshold mode
       setCurrentDb(25); // Start threshold mode at 25 dB
