@@ -46,14 +46,6 @@ const Audiogram: React.FC<AudiogramProps> = ({
     
   return (
     <div className="bg-white rounded-lg border overflow-hidden p-4">
-      <div className="p-2 bg-medical-blue-light text-xs font-medium text-center text-medical-blue">
-        <span className="inline-block mr-4">
-          ● Right Ear (Blue)
-        </span>
-        <span className="inline-block">
-          ● Left Ear (Green)
-        </span>
-      </div>
       <div className="relative audiogram-grid">
         {/* Frequency labels across the top */}
         <div className="absolute -top-5 left-0 w-full flex justify-between pr-6 pl-2">
@@ -108,17 +100,29 @@ const Audiogram: React.FC<AudiogramProps> = ({
         </div>
         
         {/* Plot the results */}
-        {results.map((result, index) => (
-          <div
-            key={index}
-            className={`hearing-point ${result.ear}`}
-            style={{
-              left: `${getPositionX(result.frequency)}%`,
-              top: `${getPositionY(result.threshold)}%`,
-              backgroundColor: result.ear === 'right' ? '#1A73E8' : '#4CAF50'
-            }}
-          />
-        ))}
+        {results.map((result, index) => {
+          const isRight = result.ear === 'right';
+          const x = getPositionX(result.frequency);
+          const y = getPositionY(result.threshold);
+          
+          return (
+            <div
+              key={index}
+              className="absolute"
+              style={{
+                left: `${x}%`,
+                top: `${y + (isRight ? 0 : 1.5)}%`, // slight offset for left ear to prevent overlap
+                transform: 'translate(-50%, -50%)',
+                color: isRight ? '#1A73E8' : '#4CAF50',
+                fontSize: '1rem',
+                fontWeight: 'bold'
+              }}
+            >
+              {isRight ? '×' : '●'}
+            </div>
+          );
+        })}
+
         
         {/* Show the current frequency being tested */}
         {showCurrent && currentEar && currentFrequency && (
@@ -139,6 +143,17 @@ const Audiogram: React.FC<AudiogramProps> = ({
           <span>Better Hearing ↑</span>
           <span>Poorer Hearing ↓</span>
         </div>
+      </div>
+
+      <div className="p-2 bg-medical-blue-light text-xs font-medium mt-2">
+        <div className='flex justify-center gap-8'>
+        <span className="inline-block text-green-600">
+          ● Left Ear (Green)
+        </span>
+        <span className="inline-block mr-4 text-blue-600">
+          ● Right Ear (Blue)
+        </span>
+        </div>         
       </div>
     </div>
   );
