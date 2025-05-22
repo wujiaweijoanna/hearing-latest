@@ -49,7 +49,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
     <div className="bg-white rounded-lg border overflow-hidden px-8 pt-10 pb-4 mt-4">
       <div
         ref={containerRef} // 🔧 CHANGED
-        className="relative audiogram-grid h-[300px]" // 🔧 CHANGED: Fixed height for calculation
+        className="relative audiogram-grid h-[300px] audiogram-container" // 🔧 CHANGED: Fixed height for calculation
       >
         {/* Frequency labels across the top */}
         <div className="absolute top-[-18px] left-0 w-full">
@@ -150,6 +150,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
             return (
               <polyline
                 key={ear}
+                className='audiogram-line'
                 fill="none"
                 stroke={color}
                 strokeWidth="2"
@@ -168,7 +169,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
           return (
             <div
               key={index}
-              className="absolute"
+              className="absolute audiogram-data-point"
               style={{
                 left: `${x}px`,
                 top: `${y}px`,

@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, {useRef} from 'react';
 import { useTest } from '../context/TestContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Audiogram from './Audiogram';
 import { toast } from 'sonner';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const ResultsView = () => {
   const { 
@@ -16,10 +18,42 @@ const ResultsView = () => {
 
   const hasFailedFrequency = thresholdResults.some(result => !result.passed);
   
-  const generateReport = () => {
-    // In a real application, this would generate a PDF
-    // For now, we'll just display a toast notification
-    toast.success('Report generated! In a real application, this would generate a downloadable PDF.');
+  const cardRef = useRef<HTMLDivElement>(null);
+  const generateReport = async () => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    try {
+      // Hide buttons before capture
+      card.classList.add('pdf-export');
+      
+      const canvas = await html2canvas(card, {
+        scale: 2,
+        logging: true,
+        useCORS: true,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelector('.audiogram-container')?.classList.add('pdf-export')
+        }
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Calculate image dimensions to fit page
+      const imgRatio = canvas.width / canvas.height;
+      const pdfImgHeight = pageWidth / imgRatio;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pdfImgHeight);
+      pdf.save(`hearing-report-${patientInfo.id || Date.now()}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF. Please try again.');
+    } finally {
+      // Restore buttons after capture
+      card.classList.remove('pdf-export');
+    }
   };
   
   // Calculate test duration
@@ -37,7 +71,7 @@ const ResultsView = () => {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
-      <Card className="mb-8">
+      <Card className="mb-8" ref={cardRef}>
         <CardHeader className={`${hasFailedFrequency ? 'bg-red-50' : 'bg-green-50'} border-b`}>
           <div className="flex justify-between items-start">
             <div>
@@ -163,7 +197,7 @@ const ResultsView = () => {
           </div>
         </CardContent>
         
-        <CardFooter className="border-t bg-gray-50 p-4 flex justify-between">
+        <CardFooter className="pdf-hide-footer border-t bg-gray-50 p-4 flex justify-between">
           <Button 
             variant="outline"
             onClick={resetTest}
