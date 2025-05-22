@@ -120,13 +120,17 @@ const Audiogram: React.FC<AudiogramProps> = ({
           className="db-line"
           style={{
             top: `${(20 / 80) * 100}%`,
-            backgroundColor: 'rgba(220, 38, 38, 0.3)',
+            backgroundColor: '#4CAF50',
             height: '2px'
           }}
         />
         <div
-          className="absolute text-xs text-red-500 right-0"
-          style={{ top: `${(20 / 80) * 100}%` }}
+          className="absolute text-xs text-black-500 right-0"
+          style={{ 
+            top: `${(20 / 80) * 100}%`,
+            transform: 'translateY(-100%)', // Moves it above the line
+            marginTop: '-2px'
+          }}
         >
           Pass/Fail Line
         </div>
