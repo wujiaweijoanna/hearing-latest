@@ -65,6 +65,21 @@
   }
 }
 
+@keyframes pulse-dot {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.9;
+  }
+}
+
 /* Audiogram custom styling */
 .audiogram-grid {
   width: 100%;
@@ -90,10 +105,18 @@
 
 .hearing-point {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 16px; /* Updated */
+  height: 16px; /* Updated */
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  z-index: 10; /* Ensure it's on top */
+}
+
+.active-frequency {
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05), 
+              0 0 12px rgba(33, 150, 243, 0.6), 
+              0 0 24px rgba(33, 150, 243, 0.4);
+  animation: pulse-dot 1.5s infinite;
 }
 
 .hearing-point.right {
