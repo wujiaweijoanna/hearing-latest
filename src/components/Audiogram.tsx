@@ -134,7 +134,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
         {/* 🔧 CHANGED: Connect points with lines */}
         <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
           {['left', 'right'].map(ear => {
-            const color = ear === 'right' ? '#1A73E8' : '#4CAF50';
+            const color = ear === 'right' ? '#EF4444' : '#3B82F6';
             const earResults = results
               .filter(r => r.ear === ear)
               .sort((a, b) => a.frequency - b.frequency);
@@ -174,12 +174,12 @@ const Audiogram: React.FC<AudiogramProps> = ({
                 left: `${x}px`,
                 top: `${y}px`,
                 transform: 'translate(-50%, -50%)',
-                color: isRight ? '#1A73E8' : '#4CAF50',
+                color: isRight ? '#EF4444' : '#3B82F6',
                 fontSize: '1rem',
                 fontWeight: 'bold'
               }}
             >
-              {isRight ? '×' : '●'}
+              {isRight ? 'X' : 'O'}
             </div>
           );
         })}
@@ -193,7 +193,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
               top: `${getPositionY(0)}px`,
               opacity: 0.5,
               backgroundColor:
-                currentEar === 'right' ? '#1A73E8' : '#4CAF50'
+                currentEar === 'right' ? '#EF4444' : '#3B82F6'
             }}
           />
         )}
@@ -209,8 +209,8 @@ const Audiogram: React.FC<AudiogramProps> = ({
 
       <div className="p-2 bg-medical-blue-light text-xs font-medium mt-2">
         <div className="flex justify-center gap-8">
-          <span className="inline-block text-green-600">● Left Ear (Green)</span>
-          <span className="inline-block mr-4 text-blue-600">× Right Ear (Blue)</span>
+          <span className="inline-block text-blue-600">O Left Ear (Blue)</span>
+          <span className="inline-block mr-4 text-red-600">X Right Ear (Red)</span>
         </div>
       </div>
     </div>

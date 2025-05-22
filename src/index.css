@@ -120,12 +120,13 @@
 }
 
 .hearing-point.right {
-  background-color: theme('colors.medical.blue.DEFAULT');
+  background-color: theme('colors.red.500');
 }
 
 .hearing-point.left {
-  background-color: theme('colors.medical.green.DEFAULT');
+  background-color: theme('colors.blue.500'); 
 }
+
 
 .active-frequency {
   animation: pulse-dot 1.5s infinite;
