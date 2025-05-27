@@ -32,7 +32,7 @@ const ScreeningTest = () => {
     };
   }, []);
 
-  const playTone = useCallback(async (frequency: number, dB: number, duration: number) => {
+  const playTone = useCallback(async (frequency: number, dB: number, duration: number, ear: 'left' | 'right') => {
     if (!audioContext) return;
     if (audioContext.state === 'suspended') await audioContext.resume();
 
@@ -47,7 +47,7 @@ const ScreeningTest = () => {
     oscillator.type = 'sine';
     oscillator.frequency.value = frequency;
     gainNode.gain.value = 0.2;
-    panner.pan.value = currentEar === 'right' ? 1 : -1;
+    panner.pan.value = ear === 'right' ? 1 : -1;
 
     oscillator.connect(gainNode);
     gainNode.connect(panner);
@@ -75,7 +75,7 @@ const ScreeningTest = () => {
 
     setStartTime(new Date());
     toast.info('Starting test at 50 dB HL');
-    playTone(1000, 50, 1.5);
+    playTone(1000, 50, 1.5, 'right');
 
     setCurrentEar('right');
     setCurrentFrequency(1000);
@@ -98,9 +98,9 @@ const ScreeningTest = () => {
       setFrequencyIndex(0);
       setPhase('descending');
       setTestStarted(true);
-      playTone(1000, 50, 1.5)
+      playTone(1000, 50, 1.5, 'right')
     } else {
-      playTone(currentFrequency, currentDb, 1.5)
+      playTone(currentFrequency, currentDb, 1.5, currentEar)
     }
     setTestTonePlayed(true);
   };
@@ -109,24 +109,17 @@ const ScreeningTest = () => {
   const recordResponse = (heard: boolean) => {
     if (isPlaying) return;
 
+    const handleNextTone = (nextDb: number) => {
+      setCurrentDb(nextDb);
+      setTimeout(() => {
+        playTone(currentFrequency, nextDb, 1.5, currentEar);
+        setTestTonePlayed(true);
+      }, 3000);
+    };
+
     if (heard) {
-      if (phase === 'descending') {
-        if (currentDb > 20) {
-          const nextDb = currentDb - 10;
-          setCurrentDb(nextDb);
-          setTimeout(() => {
-            playTone(currentFrequency, nextDb, 1.5);
-            setTestTonePlayed(true);
-          }, 3000);
-        } else {
-          addThresholdResult({
-            ear: currentEar,
-            frequency: currentFrequency,
-            threshold: currentDb,
-            passed: currentDb <= 20,
-          });
-          setTimeout(moveToNextFrequency, 3000);
-        }
+      if (phase === 'descending' && currentDb > 20) {
+        handleNextTone(currentDb - 10);
       } else {
         addThresholdResult({
           ear: currentEar,
@@ -137,43 +130,21 @@ const ScreeningTest = () => {
         setTimeout(moveToNextFrequency, 3000);
       }
     } else {
-      if (phase === 'descending') {
-        setPhase('ascending');
-        const nextDb = currentDb + 10;
-        if (nextDb > 50) {
-          addThresholdResult({
-            ear: currentEar,
-            frequency: currentFrequency,
-            threshold: 50,
-            passed: false,
-          });
-          setTimeout(moveToNextFrequency, 3000);
-        } else {
-          setCurrentDb(nextDb);
-          setTimeout(() => {
-            playTone(currentFrequency, nextDb, 1.5);
-            setTestTonePlayed(true);
-          }, 3000);
-        }
+      const nextDb = currentDb + 10;
+      if (nextDb > 50) {
+        addThresholdResult({
+          ear: currentEar,
+          frequency: currentFrequency,
+          threshold: 50,
+          passed: false,
+        });
+        setTimeout(moveToNextFrequency, 3000);
       } else {
-        const nextDb = currentDb + 10;
-        if (nextDb > 50) {
-          addThresholdResult({
-            ear: currentEar,
-            frequency: currentFrequency,
-            threshold: 50,
-            passed: false,
-          });
-          setTimeout(moveToNextFrequency, 3000);
-        } else {
-          setCurrentDb(nextDb);
-          setTimeout(() => {
-            playTone(currentFrequency, nextDb, 1.5);
-            setTestTonePlayed(true);
-          }, 3000);
-        }
+        setPhase('ascending');
+        handleNextTone(nextDb);
       }
     }
+
     setTestTonePlayed(false);
   };
 
@@ -181,12 +152,13 @@ const ScreeningTest = () => {
     const nextIndex = frequencyIndex + 1;
 
     if (nextIndex < frequencies.length) {
+      const nextFrequency = frequencies[nextIndex] as 1000 | 2000 | 4000;
       setFrequencyIndex(nextIndex);
-      setCurrentFrequency(frequencies[nextIndex] as 1000 | 2000| 4000);
+      setCurrentFrequency(nextFrequency);
       setCurrentDb(50);
       setPhase('descending');
       setTimeout(() => {
-        playTone(frequencies[nextIndex], 50, 1.5);
+        playTone(nextFrequency, 50, 1.5, currentEar);
         setTestTonePlayed(true);
       }, 3000);
     } else if (currentEar === 'right') {
@@ -196,7 +168,7 @@ const ScreeningTest = () => {
       setCurrentDb(50);
       setPhase('descending');
       setTimeout(() => {
-        playTone(1000, 50, 1.5);
+        playTone(1000, 50, 1.5, 'left');
         setTestTonePlayed(true);
       }, 3000);
     } else {
