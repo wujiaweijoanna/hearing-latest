@@ -11,10 +11,8 @@ const ScreeningTest = () => {
     currentEar, setCurrentEar,
     currentFrequency, setCurrentFrequency,
     currentDb, setCurrentDb,
-    responseStatus, setResponseStatus,
     setCurrentPhase,
     thresholdResults, addThresholdResult,
-    currentAttempt, setCurrentAttempt,
     startTime, setStartTime
   } = useTest();
 
@@ -23,6 +21,7 @@ const ScreeningTest = () => {
   const [frequencyIndex, setFrequencyIndex] = useState(0);
   const [testStarted, setTestStarted] = useState(false);
   const [testTonePlayed, setTestTonePlayed] = useState(false);
+  const [phase, setPhase] = useState<'descending' | 'ascending'>('descending');
   const frequencies: number[] = [1000, 2000, 4000];
 
   useEffect(() => {
@@ -68,7 +67,6 @@ const ScreeningTest = () => {
     };
   }, [audioContext, currentEar]);
 
-  // Start test - play familiarization tone
   const startTest = () => {
     if (!audioContext) {
       const context = new AudioContext();
@@ -76,96 +74,129 @@ const ScreeningTest = () => {
     }
 
     setStartTime(new Date());
-    toast.info('Playing familiarization tone at 40 dB HL');
-    playTone(1000, 40, 1.5);
+    toast.info('Starting test at 50 dB HL');
+    playTone(1000, 50, 1.5);
 
     setCurrentEar('right');
     setCurrentFrequency(1000);
-    setCurrentDb(20);
+    setCurrentDb(50);
     setFrequencyIndex(0);
-    setResponseStatus('waiting');
-    setCurrentAttempt(0);
+    setPhase('descending');
     setTestStarted(true);
     setTestTonePlayed(false);
   };
 
-  // Play current test tone when user clicks button
   const playCurrentTestTone = () => {
     if (isPlaying) return;
-    playTone(currentFrequency, currentDb, 1.5);
-    setResponseStatus('waiting');
+  
+    // First tone initialization
+    if (!testStarted) {
+      setStartTime(new Date());
+      setCurrentEar('right');
+      setCurrentFrequency(1000);
+      setCurrentDb(50);
+      setFrequencyIndex(0);
+      setPhase('descending');
+      setTestStarted(true);
+      playTone(1000, 50, 1.5)
+    } else {
+      playTone(currentFrequency, currentDb, 1.5)
+    }
     setTestTonePlayed(true);
   };
+  
 
-  // Handle user response
   const recordResponse = (heard: boolean) => {
     if (isPlaying) return;
 
     if (heard) {
-      setResponseStatus('responded');
-      addThresholdResult({
-        ear: currentEar,
-        frequency: currentFrequency as 1000 | 2000 | 4000,
-        threshold: currentDb,
-        passed: currentDb <= 20,
-      });
-      setCurrentDb(20);
-      setCurrentAttempt(0);
-
-      // After 3s, go to next frequency and auto play tone
-      setTimeout(() => {
-        moveToNextFrequency();
-      }, 3000);
-    } else {
-      // Increase level on no response
-      const nextDb = currentDb + 5;
-      if (nextDb > 50) {
-        // max level reached, record failed and move on
-        setResponseStatus('failed');
-        setCurrentAttempt(0);
-        setTimeout(() => {
-          moveToNextFrequency();
-        }, 3000);
+      if (phase === 'descending') {
+        if (currentDb > 20) {
+          const nextDb = currentDb - 10;
+          setCurrentDb(nextDb);
+          setTimeout(() => {
+            playTone(currentFrequency, nextDb, 1.5);
+            setTestTonePlayed(true);
+          }, 3000);
+        } else {
+          addThresholdResult({
+            ear: currentEar,
+            frequency: currentFrequency,
+            threshold: currentDb,
+            passed: currentDb <= 20,
+          });
+          setTimeout(moveToNextFrequency, 3000);
+        }
       } else {
-        setCurrentDb(nextDb);
-        setCurrentAttempt(0);
-        setResponseStatus('waiting');
-        // Play next louder tone after 3s
-        setTimeout(() => {
-          playTone(currentFrequency, nextDb, 1.5);
-          setTestTonePlayed(true);
-        }, 3000);
+        addThresholdResult({
+          ear: currentEar,
+          frequency: currentFrequency,
+          threshold: currentDb,
+          passed: currentDb <= 20,
+        });
+        setTimeout(moveToNextFrequency, 3000);
+      }
+    } else {
+      if (phase === 'descending') {
+        setPhase('ascending');
+        const nextDb = currentDb + 10;
+        if (nextDb > 50) {
+          addThresholdResult({
+            ear: currentEar,
+            frequency: currentFrequency,
+            threshold: 50,
+            passed: false,
+          });
+          setTimeout(moveToNextFrequency, 3000);
+        } else {
+          setCurrentDb(nextDb);
+          setTimeout(() => {
+            playTone(currentFrequency, nextDb, 1.5);
+            setTestTonePlayed(true);
+          }, 3000);
+        }
+      } else {
+        const nextDb = currentDb + 10;
+        if (nextDb > 50) {
+          addThresholdResult({
+            ear: currentEar,
+            frequency: currentFrequency,
+            threshold: 50,
+            passed: false,
+          });
+          setTimeout(moveToNextFrequency, 3000);
+        } else {
+          setCurrentDb(nextDb);
+          setTimeout(() => {
+            playTone(currentFrequency, nextDb, 1.5);
+            setTestTonePlayed(true);
+          }, 3000);
+        }
       }
     }
     setTestTonePlayed(false);
   };
 
-  // Move to next frequency or ear or complete test
   const moveToNextFrequency = () => {
     const nextIndex = frequencyIndex + 1;
 
     if (nextIndex < frequencies.length) {
       setFrequencyIndex(nextIndex);
-      setCurrentFrequency(frequencies[nextIndex] as 1000 | 2000 | 4000);
-      setCurrentDb(20);
-      setCurrentAttempt(0);
-      setResponseStatus('waiting');
-
-      // Auto play next tone after 3s
+      setCurrentFrequency(frequencies[nextIndex] as 1000 | 2000| 4000);
+      setCurrentDb(50);
+      setPhase('descending');
       setTimeout(() => {
-        playTone(frequencies[nextIndex], 20, 1.5);
+        playTone(frequencies[nextIndex], 50, 1.5);
         setTestTonePlayed(true);
       }, 3000);
     } else if (currentEar === 'right') {
       setCurrentEar('left');
       setFrequencyIndex(0);
       setCurrentFrequency(1000);
-      setCurrentDb(20);
-      setCurrentAttempt(0);
-      setResponseStatus('waiting');
-
+      setCurrentDb(50);
+      setPhase('descending');
       setTimeout(() => {
-        playTone(1000, 20, 1.5);
+        playTone(1000, 50, 1.5);
         setTestTonePlayed(true);
       }, 3000);
     } else {
@@ -219,15 +250,6 @@ const ScreeningTest = () => {
                   <p className="text-xl font-semibold text-medical-blue">{currentDb} dB HL</p>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-500">Attempt</p>
-                  <p className="text-xl font-semibold text-medical-blue">
-                    {responseStatus === 'responded' ? 'Responded' :
-                      responseStatus === 'failed' ? 'Failed' :
-                      `${currentAttempt}/3`}
-                  </p>
-                </div>
-
                 <div className="bg-gray-50 p-4 rounded-lg text-center col-span-2">
                   <p className="text-sm text-gray-500">Test Duration</p>
                   <p className="text-xl font-semibold text-medical-blue">{getTestDuration()}</p>
@@ -252,61 +274,49 @@ const ScreeningTest = () => {
             </CardHeader>
 
             <CardContent className="pt-6">
-              {!testStarted ? (
-                <div className="text-center">
+              {!testTonePlayed ? (
+                <Button
+                  className="w-full mb-4"
+                  size="lg"
+                  onClick={playCurrentTestTone}
+                  disabled={isPlaying}
+                >
+                  <Volume className="mr-2 h-5 w-5" />
+                  Play Test Tone ({currentFrequency} Hz at {!testStarted ? 50 : currentDb} dB)
+                </Button>
+              ) : (
+                <p className="text-center mb-4 text-gray-700">
+                  Tone played. Awaiting response...
+                </p>
+              )}
+
+              {testStarted ? (
+                <div className="grid grid-cols-2 gap-4">
                   <Button
-                    className="bg-medical-blue hover:bg-medical-blue-dark mb-4"
-                    size="lg"
-                    onClick={startTest}
-                    disabled={isPlaying}
+                    variant="outline"
+                    className="h-16 border-2 border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
+                    disabled={!testTonePlayed || isPlaying}
+                    onClick={() => recordResponse(false)}
                   >
-                    <Headphones className="mr-2 h-5 w-5" />
-                    Start Test with Familiarization Tone
+                    No Response
                   </Button>
-                  <p className="text-sm text-gray-500">
-                    Make sure headphones are properly placed on the child
-                  </p>
+
+                  <Button
+                    variant="outline"
+                    className="h-16 border-2 border-green-200 bg-green-50 text-green-600 hover:bg-green-100"
+                    disabled={!testTonePlayed || isPlaying}
+                    onClick={() => recordResponse(true)}
+                  >
+                    Responded
+                  </Button>
                 </div>
               ) : (
-                <>
-                  {!testTonePlayed ? (
-                    <Button
-                      className="w-full mb-4"
-                      size="lg"
-                      onClick={playCurrentTestTone}
-                      disabled={isPlaying}
-                    >
-                      <Volume className="mr-2 h-5 w-5" />
-                      Play Test Tone ({currentFrequency} Hz at {currentDb} dB)
-                    </Button>
-                  ) : (
-                    <p className="text-center mb-4 text-gray-700">
-                      Tone played. Awaiting response...
-                    </p>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button
-                      variant="outline"
-                      className="h-16 border-2 border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                      disabled={!testTonePlayed || isPlaying || responseStatus !== 'waiting'}
-                      onClick={() => recordResponse(false)}
-                    >
-                      No Response
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      className="h-16 border-2 border-green-200 bg-green-50 text-green-600 hover:bg-green-100"
-                      disabled={!testTonePlayed || isPlaying || responseStatus !== 'waiting'}
-                      onClick={() => recordResponse(true)}
-                    >
-                      Responded
-                    </Button>
-                  </div>
-                </>
+                <p className="text-center text-sm text-gray-500">
+                  Make sure headphones are properly placed on the child
+                </p>
               )}
             </CardContent>
+
 
             <CardFooter className="border-t bg-gray-50 p-4">
               <Button
