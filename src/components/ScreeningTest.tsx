@@ -108,7 +108,7 @@ const ScreeningTest = () => {
 
   const recordResponse = (heard: boolean) => {
     if (isPlaying) return;
-
+  
     const handleNextTone = (nextDb: number) => {
       setCurrentDb(nextDb);
       setTimeout(() => {
@@ -116,7 +116,7 @@ const ScreeningTest = () => {
         setTestTonePlayed(true);
       }, 3000);
     };
-
+  
     if (heard) {
       if (phase === 'descending' && currentDb > 20) {
         handleNextTone(currentDb - 10);
@@ -130,23 +130,25 @@ const ScreeningTest = () => {
         setTimeout(moveToNextFrequency, 3000);
       }
     } else {
-      const nextDb = currentDb + 10;
-      if (nextDb > 50) {
+      // If can't hear at 50 dB — whether starting at 50 (descending) OR ascending phase
+      if (currentDb === 50) {
         addThresholdResult({
           ear: currentEar,
           frequency: currentFrequency,
-          threshold: 50,
+          threshold: 60,  // Record 60 in these cases
           passed: false,
         });
         setTimeout(moveToNextFrequency, 3000);
       } else {
+        // Otherwise, go up by 10 and switch to ascending phase
         setPhase('ascending');
-        handleNextTone(nextDb);
+        handleNextTone(currentDb + 10);
       }
     }
-
+  
     setTestTonePlayed(false);
   };
+
 
   const moveToNextFrequency = () => {
     const nextIndex = frequencyIndex + 1;
