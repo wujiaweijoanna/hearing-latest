@@ -21,7 +21,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
   showCurrent = false
 }) => {
   const frequencies = [1000, 2000, 4000];
-  const dbLevels = [0, 10, 20, 30, 40, 50, 60, 70, 80];
+  const dbLevels = [0, 10, 20, 30, 40, 50, 60];
   const containerRef = useRef<HTMLDivElement>(null); // 🔧 CHANGED
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 }); // 🔧 CHANGED
 
@@ -81,14 +81,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
                   transform: 'translateY(-50%)',
                 }}
               >
-                {db === 80 ? (
-                  <>
-                    <div>{db}</div>
-                    <div>dB</div>
-                  </>
-                ) : (
-                  db
-                )}
+                {db === 60 ? '>50' : db}
               </div>
             );
           })}
