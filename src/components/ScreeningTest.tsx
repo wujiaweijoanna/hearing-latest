@@ -319,6 +319,7 @@ const ScreeningTest = () => {
                 results={thresholdResults}
                 currentEar={currentEar}
                 currentFrequency={currentFrequency}
+                currentDb={currentDb}
                 showCurrent={true}
               />
             </CardContent>

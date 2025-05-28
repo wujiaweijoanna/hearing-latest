@@ -11,6 +11,7 @@ interface AudiogramProps {
   results: ThresholdResult[];
   currentEar?: 'right' | 'left';
   currentFrequency?: number;
+  currentDb?: number;
   showCurrent?: boolean;
 }
 
@@ -18,6 +19,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
   results,
   currentEar,
   currentFrequency,
+  currentDb,
   showCurrent = false
 }) => {
   const frequencies = [1000, 2000, 4000];
@@ -182,12 +184,12 @@ const Audiogram: React.FC<AudiogramProps> = ({
         })}
 
         {/* Optional current test marker */}
-        {showCurrent && currentEar && currentFrequency && (
+        {showCurrent && currentEar && currentFrequency != null && currentDb != null && (
           <div
             className={`hearing-point ${currentEar} active-frequency`}
             style={{
               left: `${getPositionX(currentFrequency)}px`,
-              top: `${getPositionY(0)}px`,
+              top: `${getPositionY(currentDb)}px`,
               opacity: 0.5,
               backgroundColor:
                 currentEar === 'right' ? '#EF4444' : '#3B82F6'
