@@ -110,26 +110,6 @@ const Audiogram: React.FC<AudiogramProps> = ({
           />
         ))}
 
-        {/* Pass/Fail threshold line */}
-        <div
-          className="db-line"
-          style={{
-            top: `${(20 / 80) * 100}%`,
-            backgroundColor: '#4CAF50',
-            height: '2px'
-          }}
-        />
-        <div
-          className="absolute text-xs text-black-500 right-0"
-          style={{ 
-            top: `${(20 / 80) * 100}%`,
-            transform: 'translateY(-100%)', // Moves it above the line
-            marginTop: '-2px'
-          }}
-        >
-          Pass/Fail Line
-        </div>
-
         {/* 🔧 CHANGED: Connect points with lines */}
         <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
           {['left', 'right'].map(ear => {
