@@ -248,19 +248,18 @@ const ScreeningTest = () => {
             </CardHeader>
 
             <CardContent className="pt-6">
-              {!testTonePlayed ? (
+              {!testStarted ? (
                 <Button
-                  className="w-full mb-4"
-                  size="lg"
+                  className="w-full py-4 text-base font-medium flex items-center justify-center gap-2 bg-medical-blue text-white hover:bg-medical-blue-dark transition-all rounded-lg shadow"
                   onClick={playCurrentTestTone}
                   disabled={isPlaying}
                 >
-                  <Volume className="mr-2 h-5 w-5" />
-                  Play Test Tone ({currentFrequency} Hz at {!testStarted ? 50 : currentDb} dB)
+                  <Volume className="h-6 w-6" />
+                  Start Hearing Test
                 </Button>
               ) : (
                 <p className="text-center mb-4 text-gray-700">
-                  Tone played. Awaiting response...
+                  Play Test Tone: {currentFrequency} Hz at {currentDb} dB
                 </p>
               )}
 
