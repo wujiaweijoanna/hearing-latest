@@ -320,7 +320,7 @@ const ScreeningTest = () => {
                 currentEar={currentEar}
                 currentFrequency={currentFrequency}
                 currentDb={currentDb}
-                showCurrent={true}
+                showCurrent={isPlaying}
               />
             </CardContent>
           </Card>
