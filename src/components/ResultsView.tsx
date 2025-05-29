@@ -128,7 +128,7 @@ const ResultsView = () => {
               <h3 className="font-semibold text-lg mt-6 mb-4">Summary by Ear</h3>
               <div className="space-y-4">
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <h4 className="font-medium text-medical-blue mb-2">Right Ear</h4>
+                  <h4 className="font-medium text-red-600 mb-2">Right Ear</h4>
                   <div className="space-y-2">
                     {[1000, 2000, 4000].map(freq => {
                       const result = thresholdResults.find(r => r.ear === 'right' && r.frequency === freq);
@@ -149,7 +149,7 @@ const ResultsView = () => {
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <h4 className="font-medium text-medical-green mb-2">Left Ear</h4>
+                  <h4 className="font-medium text-medical-blue mb-2">Left Ear</h4>
                   <div className="space-y-2">
                     {[1000, 2000, 4000].map(freq => {
                       const result = thresholdResults.find(r => r.ear === 'left' && r.frequency === freq);
