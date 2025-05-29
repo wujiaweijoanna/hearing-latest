@@ -209,7 +209,7 @@ const ScreeningTest = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg text-center">
                   <p className="text-sm text-gray-500">Ear</p>
-                  <p className={`text-xl font-semibold ${currentEar === 'right' ? 'text-medical-blue' : 'text-medical-green'}`}>
+                  <p className={`text-xl font-semibold ${currentEar === 'right' ? 'text-red-600' : 'text-medical-blue'}`}>
                     {currentEar === 'right' ? 'Right' : 'Left'}
                   </p>
                 </div>
