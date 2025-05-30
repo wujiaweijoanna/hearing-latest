@@ -46,7 +46,10 @@ const ResultsView = () => {
       const pdfImgHeight = pageWidth / imgRatio;
       
       pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pdfImgHeight);
-      pdf.save(`hearing-report-${patientInfo.id || Date.now()}.pdf`);
+            const safeName = patientInfo.name
+        ? patientInfo.name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
+        : 'Unknown_Patient';
+      pdf.save(`${safeName}_Report.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
       toast.error('Failed to generate PDF. Please try again.');
