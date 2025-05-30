@@ -53,6 +53,17 @@ const Audiogram: React.FC<AudiogramProps> = ({
         ref={containerRef} // 🔧 CHANGED
         className="relative audiogram-grid h-[300px] audiogram-container" // 🔧 CHANGED: Fixed height for calculation
       >
+        {/* Passing zone background */}
+        <div
+          className="absolute bg-blue-100"
+          style={{
+            left: `${getPositionX(1000)}px`,
+            top: `${getPositionY(0)}px`,
+            width: `${getPositionX(4000) - getPositionX(1000)}px`,
+            height: `${getPositionY(20) - getPositionY(0)}px`,
+            zIndex: 0
+          }}
+        />
         {/* Frequency labels across the top */}
         <div className="absolute top-[-18px] left-0 w-full">
           {frequencies.map((freq, index) => (
