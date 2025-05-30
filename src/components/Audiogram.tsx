@@ -199,8 +199,8 @@ const Audiogram: React.FC<AudiogramProps> = ({
 
       <div className="p-2 bg-medical-blue-light text-xs font-medium mt-2">
         <div className="flex justify-center gap-8">
-          <span className="inline-block text-blue-600">X Left Ear (Blue)</span>
-          <span className="inline-block mr-4 text-red-600">O Right Ear (Red)</span>
+          <span className="inline-block text-red-600">O Right Ear (Red)</span>
+          <span className="inline-block mr-4 text-blue-600">X Left Ear (Blue)</span>
         </div>
       </div>
     </div>
