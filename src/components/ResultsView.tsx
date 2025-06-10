@@ -1,5 +1,4 @@
-
-import React, {useRef} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import { useTest } from '../context/TestContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,15 +6,20 @@ import Audiogram from './Audiogram';
 import { toast } from 'sonner';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 
 const ResultsView = () => {
   const { 
     patientInfo, 
     thresholdResults, 
     resetTest,
-    startTime
+    startTime,
+    environmentCheck
   } = useTest();
 
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const hasFailedFrequency = thresholdResults.some(result => !result.passed);
   
   const cardRef = useRef<HTMLDivElement>(null);
@@ -70,6 +74,104 @@ const ResultsView = () => {
     const seconds = diffSec % 60;
     
     return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const saveResults = async () => {
+    if (isSaved) return; // Don't save if already saved
+    setIsSaving(true);
+    
+    try {
+      // Get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('User not authenticated');
+        return;
+      }
+
+      // 1. Save patient information
+      const patientId = uuidv4();
+      const { error: patientError } = await supabase
+        .from('patients')
+        .insert({
+          id: patientId,
+          name: patientInfo.name,
+          patient_id: patientInfo.id,
+          age: patientInfo.age,
+          notes: patientInfo.notes,
+          user_id: user.id
+        });
+
+      if (patientError) {
+        throw new Error(`Error saving patient: ${patientError.message}`);
+      }
+
+      // 2. Create test result record
+      const testResultId = uuidv4();
+      const testDuration = startTime ? Math.floor((new Date().getTime() - startTime.getTime()) / 1000) : 0;
+      
+      const { error: testError } = await supabase
+        .from('test_results')
+        .insert({
+          id: testResultId,
+          patient_id: patientId,
+          user_id: user.id,
+          test_date: new Date().toISOString(),
+          overall_result: hasFailedFrequency ? 'REFER' : 'PASS',
+          duration_seconds: testDuration,
+          environment_noise_level: environmentCheck.noiseLevel,
+          notes: patientInfo.notes
+        });
+
+      if (testError) {
+        throw new Error(`Error saving test result: ${testError.message}`);
+      }
+
+      // 3. Save threshold results
+      const thresholdData = thresholdResults.map(result => ({
+        id: uuidv4(),
+        test_result_id: testResultId,
+        ear: result.ear,
+        frequency: result.frequency,
+        threshold: result.threshold,
+        passed: result.passed
+      }));
+
+      const { error: thresholdError } = await supabase
+        .from('threshold_results')
+        .insert(thresholdData);
+
+      if (thresholdError) {
+        throw new Error(`Error saving threshold results: ${thresholdError.message}`);
+      }
+
+      setIsSaved(true);
+      toast.success('Test results saved successfully');
+    } catch (error) {
+      console.error('Error saving results:', error);
+      toast.error('Failed to save test results');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    saveResults();
+  }, []); // Auto-save when component mounts
+
+  const handleStartNewTest = () => {
+    if (!isSaved && !isSaving) {
+      // If not saved and not currently saving, try to save first
+      toast.promise(saveResults(), {
+        loading: 'Saving test results...',
+        success: 'Results saved. Starting new test...',
+        error: 'Failed to save results. Please try again.'
+      });
+    } else if (isSaving) {
+      toast.info('Please wait while saving current results...');
+      return;
+    } else {
+      resetTest();
+    }
   };
 
   return (
@@ -203,9 +305,10 @@ const ResultsView = () => {
         <CardFooter className="pdf-hide-footer border-t bg-gray-50 p-4 flex justify-between">
           <Button 
             variant="outline"
-            onClick={resetTest}
+            onClick={handleStartNewTest}
+            disabled={isSaving}
           >
-            Start New Test
+            {isSaving ? 'Saving...' : 'Start New Test'}
           </Button>
           
           <Button 
