@@ -22,6 +22,7 @@ const ScreeningTest = () => {
   const [testStarted, setTestStarted] = useState(false);
   const [testTonePlayed, setTestTonePlayed] = useState(false);
   const [phase, setPhase] = useState<'descending' | 'ascending'>('descending');
+  const [isPlayingInstructions, setIsPlayingInstructions] = useState(false);
   const frequencies: number[] = [1000, 2000, 4000];
 
   useEffect(() => {
@@ -29,6 +30,24 @@ const ScreeningTest = () => {
     setAudioContext(context);
     return () => {
       context.close();
+    };
+  }, []);
+
+  // Initialize Web Speech API voices
+  useEffect(() => {
+    const loadVoices = () => {
+      window.speechSynthesis.getVoices();
+    };
+
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    return () => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
     };
   }, []);
 
@@ -65,46 +84,86 @@ const ScreeningTest = () => {
     oscillator.onended = () => {
       setIsPlaying(false);
     };
-  }, [audioContext, currentEar]);
+  }, [audioContext]);
 
-  const startTest = () => {
+  const playInstructions = useCallback(async () => {
+    setIsPlayingInstructions(true);
+    
+    // Create speech synthesis utterance
+    const utterance = new SpeechSynthesisUtterance(
+      "Welcome to the hearing test. During this test, you'll hear a series of sounds. When you hear a sound, please respond by giving a thumbs up."
+    );
+    
+    // Set voice properties for a professional female voice
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('female'));
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+    utterance.pitch = 1;
+    utterance.rate = 0.9;
+    
+    // Play instructions
+    return new Promise<void>((resolve) => {
+      utterance.onend = async () => {
+        // Play example tone after instructions
+        await new Promise(r => setTimeout(r, 500)); // Small pause after instructions
+        await playTone(1000, 40, 1, 'right'); // Example tone
+        await new Promise(r => setTimeout(r, 1000)); // Pause after example tone
+        
+        // Play "Let's begin"
+        const finalUtterance = new SpeechSynthesisUtterance("Let's begin.");
+        if (femaleVoice) {
+          finalUtterance.voice = femaleVoice;
+        }
+        finalUtterance.onend = () => {
+          setIsPlayingInstructions(false);
+          resolve();
+        };
+        window.speechSynthesis.speak(finalUtterance);
+      };
+      
+      window.speechSynthesis.speak(utterance);
+    });
+  }, [playTone]);
+
+  const startTest = async () => {
     if (!audioContext) {
       const context = new AudioContext();
       setAudioContext(context);
     }
 
-    setStartTime(new Date());
-    toast.info('Starting test at 50 dB HL');
-    playTone(1000, 50, 1.5, 'right');
+    // Play instructions first
+    await playInstructions();
+    
+    // Wait 5 seconds before starting the test
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
+    // Initialize test parameters
+    setStartTime(new Date());
     setCurrentEar('right');
     setCurrentFrequency(1000);
     setCurrentDb(50);
     setFrequencyIndex(0);
     setPhase('descending');
     setTestStarted(true);
-    setTestTonePlayed(false);
+    
+    // Play first tone
+    toast.info('Starting test at 50 dB HL');
+    await playTone(1000, 50, 1.5, 'right');
+    setTestTonePlayed(true);
   };
 
   const playCurrentTestTone = () => {
-    if (isPlaying) return;
+    if (isPlaying || isPlayingInstructions) return;
   
-    // First tone initialization
     if (!testStarted) {
-      setStartTime(new Date());
-      setCurrentEar('right');
-      setCurrentFrequency(1000);
-      setCurrentDb(50);
-      setFrequencyIndex(0);
-      setPhase('descending');
-      setTestStarted(true);
-      playTone(1000, 50, 1.5, 'right')
+      startTest();
     } else {
-      playTone(currentFrequency, currentDb, 1.5, currentEar)
+      playTone(currentFrequency, currentDb, 1.5, currentEar);
+      setTestTonePlayed(true);
     }
-    setTestTonePlayed(true);
   };
-  
 
   const recordResponse = (heard: boolean) => {
     if (isPlaying) return;
@@ -148,7 +207,6 @@ const ScreeningTest = () => {
   
     setTestTonePlayed(false);
   };
-
 
   const moveToNextFrequency = () => {
     const nextIndex = frequencyIndex + 1;
@@ -252,10 +310,10 @@ const ScreeningTest = () => {
                 <Button
                   className="w-full py-4 text-base font-medium flex items-center justify-center gap-2 bg-medical-blue text-white hover:bg-medical-blue-dark transition-all rounded-lg shadow"
                   onClick={playCurrentTestTone}
-                  disabled={isPlaying}
+                  disabled={isPlaying || isPlayingInstructions}
                 >
                   <Volume className="h-6 w-6" />
-                  Start Hearing Test
+                  {isPlayingInstructions ? 'Playing Instructions...' : 'Start Hearing Test'}
                 </Button>
               ) : (
                 <p className="text-center mb-4 text-gray-700">
