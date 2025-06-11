@@ -15,7 +15,8 @@ const ResultsView = () => {
     thresholdResults, 
     resetTest,
     startTime,
-    environmentCheck
+    environmentCheck,
+    remarks
   } = useTest();
 
   const [isSaving, setIsSaving] = useState(false);
@@ -274,7 +275,17 @@ const ResultsView = () => {
                   </div>
                 </div>
               </div>
-              
+
+              {remarks && (
+                <div className="mt-6">
+                  <h3 className="font-semibold text-lg mb-4">Test Remarks</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {remarks}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div>

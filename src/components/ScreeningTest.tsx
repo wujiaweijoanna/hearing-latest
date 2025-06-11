@@ -13,7 +13,8 @@ const ScreeningTest = () => {
     currentDb, setCurrentDb,
     setCurrentPhase,
     thresholdResults, addThresholdResult,
-    startTime, setStartTime
+    startTime, setStartTime,
+    remarks, setRemarks
   } = useTest();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -23,6 +24,7 @@ const ScreeningTest = () => {
   const [testTonePlayed, setTestTonePlayed] = useState(false);
   const [phase, setPhase] = useState<'descending' | 'ascending'>('descending');
   const [isPlayingInstructions, setIsPlayingInstructions] = useState(false);
+  const [showSaveButton, setShowSaveButton] = useState(false);
   const frequencies: number[] = [1000, 2000, 4000];
 
   useEffect(() => {
@@ -233,7 +235,7 @@ const ScreeningTest = () => {
         setTestTonePlayed(true);
       }, 3000);
     } else {
-      completeTest();
+      setShowSaveButton(true);
     }
   };
 
@@ -348,22 +350,10 @@ const ScreeningTest = () => {
                 </p>
               )}
             </CardContent>
-
-
-            <CardFooter className="border-t bg-gray-50 p-4">
-              <Button
-                variant="outline"
-                className="ml-auto"
-                onClick={completeTest}
-                disabled={isPlaying}
-              >
-                End Test & View Results
-              </Button>
-            </CardFooter>
           </Card>
         </div>
 
-        <div>
+        <div className="space-y-8">
           <Card className="h-full">
             <CardHeader className="bg-medical-blue-light border-b">
               <CardTitle className="text-medical-blue">Audiogram</CardTitle>
@@ -382,6 +372,35 @@ const ScreeningTest = () => {
               />
             </CardContent>
           </Card>
+
+          {testStarted && (
+            <Card>
+              <CardHeader className="bg-medical-blue-light border-b">
+                <CardTitle className="text-medical-blue">Test Remarks</CardTitle>
+                <CardDescription>
+                  Add any observations or notes about the test
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <textarea
+                  className="w-full h-32 p-3 border rounded-md"
+                  placeholder="Enter any remarks or observations about the test..."
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                />
+              </CardContent>
+              {showSaveButton && (
+                <CardFooter className="border-t bg-gray-50 p-4">
+                  <Button
+                    className="ml-auto bg-medical-blue hover:bg-medical-blue-dark"
+                    onClick={completeTest}
+                  >
+                    Save & View Results
+                  </Button>
+                </CardFooter>
+              )}
+            </Card>
+          )}
         </div>
       </div>
     </div>

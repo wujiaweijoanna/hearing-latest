@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Ear = 'right' | 'left';
@@ -41,6 +40,8 @@ interface TestContextType {
   setStartTime: React.Dispatch<React.SetStateAction<Date | null>>;
   currentAttempt: number;
   setCurrentAttempt: React.Dispatch<React.SetStateAction<number>>;
+  remarks: string;
+  setRemarks: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface PatientInfo {
@@ -76,6 +77,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [patientInfo, setPatientInfo] = useState<PatientInfo>(initialPatientInfo);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [currentAttempt, setCurrentAttempt] = useState<number>(0);
+  const [remarks, setRemarks] = useState<string>('');
 
   const updateEnvironmentCheck = (check: Partial<EnvironmentCheck>) => {
     setEnvironmentCheck({ ...environmentCheck, ...check });
@@ -100,6 +102,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setPatientInfo(initialPatientInfo);
     setStartTime(null);
     setCurrentAttempt(0);
+    setRemarks('');
   };
 
   return (
@@ -125,7 +128,9 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         startTime,
         setStartTime,
         currentAttempt,
-        setCurrentAttempt
+        setCurrentAttempt,
+        remarks,
+        setRemarks
       }}
     >
       {children}
