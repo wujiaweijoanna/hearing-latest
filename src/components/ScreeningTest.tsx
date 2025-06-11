@@ -118,6 +118,8 @@ const ScreeningTest = () => {
         }
         finalUtterance.onend = () => {
           setIsPlayingInstructions(false);
+          // Set test as started right after instructions finish
+          setTestStarted(true);
           resolve();
         };
         window.speechSynthesis.speak(finalUtterance);
@@ -136,17 +138,16 @@ const ScreeningTest = () => {
     // Play instructions first
     await playInstructions();
     
-    // Wait 5 seconds before starting the test
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
-    // Initialize test parameters
+    // Initialize test parameters (but don't set testStarted here since we already did it)
     setStartTime(new Date());
     setCurrentEar('right');
     setCurrentFrequency(1000);
     setCurrentDb(50);
     setFrequencyIndex(0);
     setPhase('descending');
-    setTestStarted(true);
+    
+    // Wait 5 seconds before starting the test
+    await new Promise(resolve => setTimeout(resolve, 5000));
     
     // Play first tone
     toast.info('Starting test at 50 dB HL');
