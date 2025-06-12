@@ -69,6 +69,7 @@ export type Database = {
           notes: string | null
           overall_result: string
           patient_id: string
+          remarks: string | null
           test_date: string
           user_id: string
         }
@@ -80,6 +81,7 @@ export type Database = {
           notes?: string | null
           overall_result: string
           patient_id: string
+          remarks?: string | null
           test_date?: string
           user_id: string
         }
@@ -91,6 +93,7 @@ export type Database = {
           notes?: string | null
           overall_result?: string
           patient_id?: string
+          remarks?: string | null
           test_date?: string
           user_id?: string
         }

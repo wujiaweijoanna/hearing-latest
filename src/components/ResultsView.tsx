@@ -120,7 +120,8 @@ const ResultsView = () => {
           overall_result: hasFailedFrequency ? 'REFER' : 'PASS',
           duration_seconds: testDuration,
           environment_noise_level: environmentCheck.noiseLevel,
-          notes: patientInfo.notes
+          notes: patientInfo.notes,
+          remarks: remarks
         });
 
       if (testError) {

@@ -256,9 +256,6 @@ const ScreeningTest = () => {
           <Card>
             <CardHeader className="bg-medical-blue-light border-b">
               <CardTitle className="text-medical-blue">Current Test Status</CardTitle>
-              <CardDescription>
-                Testing {currentEar === 'right' ? 'Right' : 'Left'} Ear at {currentFrequency} Hz
-              </CardDescription>
             </CardHeader>
 
             <CardContent className="pt-6 space-y-6">
