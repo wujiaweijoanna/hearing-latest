@@ -108,11 +108,6 @@ const ScreeningTest = () => {
     // Play instructions
     return new Promise<void>((resolve) => {
       utterance.onend = async () => {
-        // Play example tone after instructions
-        await new Promise(r => setTimeout(r, 500)); // Small pause after instructions
-        await playTone(1000, 40, 1, 'right'); // Example tone
-        await new Promise(r => setTimeout(r, 1000)); // Pause after example tone
-        
         // Play "Let's begin"
         const finalUtterance = new SpeechSynthesisUtterance("Let's begin.");
         if (femaleVoice) {
@@ -129,7 +124,7 @@ const ScreeningTest = () => {
       
       window.speechSynthesis.speak(utterance);
     });
-  }, [playTone]);
+  }, []);
 
   const startTest = async () => {
     if (!audioContext) {
@@ -257,8 +252,8 @@ const ScreeningTest = () => {
   return (
     <div className="container mx-auto max-w-4xl py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-          <Card className="mb-6">
+        <div className="space-y-6 flex flex-col">
+          <Card>
             <CardHeader className="bg-medical-blue-light border-b">
               <CardTitle className="text-medical-blue">Current Test Status</CardTitle>
               <CardDescription>
@@ -266,7 +261,7 @@ const ScreeningTest = () => {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="pt-6 space-y-6">
+            <CardContent className="pt-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg text-center">
                   <p className="text-sm text-gray-500">Ear</p>
@@ -285,17 +280,10 @@ const ScreeningTest = () => {
                   <p className="text-xl font-semibold text-medical-blue">{currentDb} dB HL</p>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg text-center col-span-2">
+                <div className="bg-gray-50 p-4 rounded-lg text-center">
                   <p className="text-sm text-gray-500">Test Duration</p>
                   <p className="text-xl font-semibold text-medical-blue">{getTestDuration()}</p>
                 </div>
-              </div>
-
-              <div className="border p-4 rounded-lg bg-gray-50">
-                <h3 className="font-medium text-gray-700 mb-2">Instructions for child:</h3>
-                <p className="text-sm bg-white p-3 border rounded">
-                  "Give me a thumbs up if you hear the beep."
-                </p>
               </div>
             </CardContent>
           </Card>
@@ -303,9 +291,6 @@ const ScreeningTest = () => {
           <Card>
             <CardHeader className="bg-medical-blue-light border-b">
               <CardTitle className="text-medical-blue">Test Controls</CardTitle>
-              <CardDescription>
-                Click "Play Test Tone" to begin each tone. Then respond to advance automatically.
-              </CardDescription>
             </CardHeader>
 
             <CardContent className="pt-6">
@@ -319,12 +304,6 @@ const ScreeningTest = () => {
                   {isPlayingInstructions ? 'Playing Instructions...' : 'Start Hearing Test'}
                 </Button>
               ) : (
-                <p className="text-center mb-4 text-gray-700">
-                  Play Test Tone: {currentFrequency} Hz at {currentDb} dB
-                </p>
-              )}
-
-              {testStarted ? (
                 <div className="grid grid-cols-2 gap-4">
                   <Button
                     variant="outline"
@@ -344,22 +323,42 @@ const ScreeningTest = () => {
                     Responded
                   </Button>
                 </div>
-              ) : (
-                <p className="text-center text-sm text-gray-500">
-                  Make sure headphones are properly placed on the child
-                </p>
               )}
             </CardContent>
           </Card>
+
+          <Card className="flex-grow">
+            <CardHeader className="bg-medical-blue-light border-b">
+              <CardTitle className="text-medical-blue">Test Remarks</CardTitle>
+              <CardDescription>
+                Add any observations or notes about the test (optional)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6 flex flex-col h-full">
+              <textarea
+                className="w-full flex-grow p-3 border rounded-md min-h-[120px]"
+                placeholder="Enter any remarks or observations about the test..."
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
+            </CardContent>
+            {showSaveButton && (
+              <CardFooter className="border-t bg-gray-50 p-4">
+                <Button
+                  className="ml-auto bg-medical-blue hover:bg-medical-blue-dark"
+                  onClick={completeTest}
+                >
+                  Save & View Results
+                </Button>
+              </CardFooter>
+            )}
+          </Card>
         </div>
 
-        <div className="space-y-8">
+        <div>
           <Card className="h-full">
             <CardHeader className="bg-medical-blue-light border-b">
               <CardTitle className="text-medical-blue">Audiogram</CardTitle>
-              <CardDescription>
-                Visual representation of hearing thresholds (Examiner view only)
-              </CardDescription>
             </CardHeader>
 
             <CardContent className="pt-6">
@@ -372,35 +371,6 @@ const ScreeningTest = () => {
               />
             </CardContent>
           </Card>
-
-          {testStarted && (
-            <Card>
-              <CardHeader className="bg-medical-blue-light border-b">
-                <CardTitle className="text-medical-blue">Test Remarks</CardTitle>
-                <CardDescription>
-                  Add any observations or notes about the test
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <textarea
-                  className="w-full h-32 p-3 border rounded-md"
-                  placeholder="Enter any remarks or observations about the test..."
-                  value={remarks}
-                  onChange={(e) => setRemarks(e.target.value)}
-                />
-              </CardContent>
-              {showSaveButton && (
-                <CardFooter className="border-t bg-gray-50 p-4">
-                  <Button
-                    className="ml-auto bg-medical-blue hover:bg-medical-blue-dark"
-                    onClick={completeTest}
-                  >
-                    Save & View Results
-                  </Button>
-                </CardFooter>
-              )}
-            </Card>
-          )}
         </div>
       </div>
     </div>
