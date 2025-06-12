@@ -261,7 +261,7 @@ const ScreeningTest = () => {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg text-center">
                   <p className="text-sm text-gray-500">Ear</p>
@@ -285,15 +285,7 @@ const ScreeningTest = () => {
                   <p className="text-xl font-semibold text-medical-blue">{getTestDuration()}</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader className="bg-medical-blue-light border-b">
-              <CardTitle className="text-medical-blue">Test Controls</CardTitle>
-            </CardHeader>
-
-            <CardContent className="pt-6">
               {!testStarted ? (
                 <Button
                   className="w-full py-4 text-base font-medium flex items-center justify-center gap-2 bg-medical-blue text-white hover:bg-medical-blue-dark transition-all rounded-lg shadow"
@@ -330,13 +322,10 @@ const ScreeningTest = () => {
           <Card className="flex-grow">
             <CardHeader className="bg-medical-blue-light border-b">
               <CardTitle className="text-medical-blue">Test Remarks</CardTitle>
-              <CardDescription>
-                Add any observations or notes about the test (optional)
-              </CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 flex flex-col h-full">
+            <CardContent className="pt-6 flex flex-col">
               <textarea
-                className="w-full flex-grow p-3 border rounded-md min-h-[120px]"
+                className="w-full p-3 border rounded-md min-h-[120px] max-h-[200px]"
                 placeholder="Enter any remarks or observations about the test..."
                 value={remarks}
                 onChange={(e) => setRemarks(e.target.value)}
