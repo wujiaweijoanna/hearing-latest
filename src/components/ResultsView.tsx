@@ -237,7 +237,7 @@ const ResultsView = () => {
                 <div className="bg-gray-50 p-4 rounded-lg border">
                   <h4 className="font-medium text-red-600 mb-2">Right Ear</h4>
                   <div className="space-y-2">
-                    {[1000, 2000, 4000].map(freq => {
+                    {[500, 1000, 2000, 4000].map(freq => {
                       const result = thresholdResults.find(r => r.ear === 'right' && r.frequency === freq);
                       return (
                         <div key={`right-${freq}`} className="flex justify-between text-sm">
@@ -258,7 +258,7 @@ const ResultsView = () => {
                 <div className="bg-gray-50 p-4 rounded-lg border">
                   <h4 className="font-medium text-medical-blue mb-2">Left Ear</h4>
                   <div className="space-y-2">
-                    {[1000, 2000, 4000].map(freq => {
+                    {[500, 1000, 2000, 4000].map(freq => {
                       const result = thresholdResults.find(r => r.ear === 'left' && r.frequency === freq);
                       return (
                         <div key={`left-${freq}`} className="flex justify-between text-sm">

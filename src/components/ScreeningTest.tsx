@@ -25,7 +25,7 @@ const ScreeningTest = () => {
   const [phase, setPhase] = useState<'descending' | 'ascending'>('descending');
   const [isPlayingInstructions, setIsPlayingInstructions] = useState(false);
   const [showSaveButton, setShowSaveButton] = useState(false);
-  const frequencies: number[] = [1000, 2000, 4000];
+  const frequencies: number[] = [500, 1000, 2000, 4000];
 
   useEffect(() => {
     const context = new AudioContext();
@@ -127,18 +127,12 @@ const ScreeningTest = () => {
   }, []);
 
   const startTest = async () => {
-    if (!audioContext) {
-      const context = new AudioContext();
-      setAudioContext(context);
-    }
+    if (!audioContext) return;
 
-    // Play instructions first
-    await playInstructions();
-    
-    // Initialize test parameters (but don't set testStarted here since we already did it)
+    setTestStarted(true);
     setStartTime(new Date());
     setCurrentEar('right');
-    setCurrentFrequency(1000);
+    setCurrentFrequency(500);
     setCurrentDb(50);
     setFrequencyIndex(0);
     setPhase('descending');
@@ -148,7 +142,7 @@ const ScreeningTest = () => {
     
     // Play first tone
     toast.info('Starting test at 50 dB HL');
-    await playTone(1000, 50, 1.5, 'right');
+    await playTone(500, 50, 1.5, 'right');
     setTestTonePlayed(true);
   };
 
@@ -210,7 +204,7 @@ const ScreeningTest = () => {
     const nextIndex = frequencyIndex + 1;
 
     if (nextIndex < frequencies.length) {
-      const nextFrequency = frequencies[nextIndex] as 1000 | 2000 | 4000;
+      const nextFrequency = frequencies[nextIndex] as 500 | 1000 | 2000 | 4000;
       setFrequencyIndex(nextIndex);
       setCurrentFrequency(nextFrequency);
       setCurrentDb(50);
@@ -222,11 +216,11 @@ const ScreeningTest = () => {
     } else if (currentEar === 'right') {
       setCurrentEar('left');
       setFrequencyIndex(0);
-      setCurrentFrequency(1000);
+      setCurrentFrequency(500);
       setCurrentDb(50);
       setPhase('descending');
       setTimeout(() => {
-        playTone(1000, 50, 1.5, 'left');
+        playTone(500, 50, 1.5, 'left');
         setTestTonePlayed(true);
       }, 3000);
     } else {

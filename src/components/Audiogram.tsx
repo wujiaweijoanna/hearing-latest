@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 
 interface ThresholdResult {
   ear: 'right' | 'left';
-  frequency: 1000 | 2000 | 4000;
+  frequency: 500 | 1000 | 2000 | 4000;
   threshold: number;
   passed: boolean;
 }
@@ -22,7 +22,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
   currentDb,
   showCurrent = false
 }) => {
-  const frequencies = [1000, 2000, 4000];
+  const frequencies = [500, 1000, 2000, 4000];
   const dbLevels = [0, 10, 20, 30, 40, 50, 60];
   const containerRef = useRef<HTMLDivElement>(null); // 🔧 CHANGED
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 }); // 🔧 CHANGED
@@ -50,16 +50,16 @@ const Audiogram: React.FC<AudiogramProps> = ({
   return (
     <div className="bg-white rounded-lg border overflow-hidden px-8 pt-10 pb-4 mt-4">
       <div
-        ref={containerRef} // 🔧 CHANGED
-        className="relative audiogram-grid h-[300px] audiogram-container" // 🔧 CHANGED: Fixed height for calculation
+        ref={containerRef}
+        className="relative audiogram-grid h-[300px] audiogram-container"
       >
         {/* Passing zone background */}
         <div
           className="absolute bg-blue-100"
           style={{
-            left: `${getPositionX(1000)}px`,
+            left: `${getPositionX(500)}px`,
             top: `${getPositionY(0)}px`,
-            width: `${getPositionX(4000) - getPositionX(1000)}px`,
+            width: `${getPositionX(4000) - getPositionX(500)}px`,
             height: `${getPositionY(20) - getPositionY(0)}px`,
             zIndex: 0
           }}

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Ear = 'right' | 'left';
 type TestPhase = 'environment' | 'screening' | 'threshold' | 'results';
-type Frequency = 1000 | 2000 | 4000;
+type Frequency = 500 | 1000 | 2000 | 4000;
 type ResponseStatus = 'waiting' | 'responded' | 'failed';
 
 interface EnvironmentCheck {
@@ -70,7 +70,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [currentPhase, setCurrentPhase] = useState<TestPhase>('environment');
   const [environmentCheck, setEnvironmentCheck] = useState<EnvironmentCheck>(initialEnvironmentCheck);
   const [currentEar, setCurrentEar] = useState<Ear>('right');
-  const [currentFrequency, setCurrentFrequency] = useState<Frequency>(1000);
+  const [currentFrequency, setCurrentFrequency] = useState<Frequency>(500);
   const [currentDb, setCurrentDb] = useState<number>(20);
   const [responseStatus, setResponseStatus] = useState<ResponseStatus>('waiting');
   const [thresholdResults, setThresholdResults] = useState<ThresholdResult[]>([]);
@@ -95,7 +95,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCurrentPhase('environment');
     setEnvironmentCheck(initialEnvironmentCheck);
     setCurrentEar('right');
-    setCurrentFrequency(1000);
+    setCurrentFrequency(500);
     setCurrentDb(20);
     setResponseStatus('waiting');
     setThresholdResults([]);
