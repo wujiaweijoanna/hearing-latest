@@ -75,7 +75,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
                 transform: 'translateX(-50%)',
               }}
             >
-              {freq}{freq === 2000 ? ' Hz' : ''}
+              {freq}{freq === 4000 ? 'Hz' : ''}
             </span>
           ))}
         </div>
@@ -83,7 +83,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
         {/* dB labels down the left side */}
         <div className="absolute left-[-25px] top-0 w-8">
           {dbLevels.map((db) => {
-            const y = getPositionY(db); // 💡 Use the same Y positioning as grid lines
+            const y = getPositionY(db);
 
             return (
               <div
@@ -94,7 +94,14 @@ const Audiogram: React.FC<AudiogramProps> = ({
                   transform: 'translateY(-50%)',
                 }}
               >
-                {db === 60 ? '>50' : db}
+                {db === 60 ? (
+                  <div>
+                    <div>&gt;50</div>
+                    <div style={{ textAlign: 'left', marginLeft: '1px' }}>dB</div>
+                  </div>
+                ) : (
+                  db
+                )}
               </div>
             );
           })}
