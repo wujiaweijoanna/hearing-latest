@@ -20,11 +20,16 @@ const EnvironmentCheck = () => {
   } = useTest();
   const [noiseLevelInput, setNoiseLevelInput] = useState('');
   const [calibrationDb, setCalibrationDb] = useState(30);
+  const [calibrationDb500, setCalibrationDb500] = useState(30);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying500, setIsPlaying500] = useState(false);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const oscillator500Ref = useRef<OscillatorNode | null>(null);
+  const gainNode500Ref = useRef<GainNode | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const interval500Ref = useRef<NodeJS.Timeout | null>(null);
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -134,6 +139,91 @@ const EnvironmentCheck = () => {
     }
   }, [audioContext]);
 
+  const startContinuousTone500 = useCallback(async () => {
+    if (!audioContext || isPlaying500) return;
+    if (audioContext.state === 'suspended') await audioContext.resume();
+
+    setIsPlaying500(true);
+
+    const playToneInterval = () => {
+      if (!isMounted.current) return;
+      
+      const amplitude = Math.pow(10, (calibrationDb500 - 100) / 20);
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 500; // 500Hz tone
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      const now = audioContext.currentTime;
+      // Start with zero gain
+      gainNode.gain.setValueAtTime(0, now);
+      // Quick fade in
+      gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.01);
+      // Hold at target amplitude
+      gainNode.gain.setValueAtTime(amplitude, now + 0.99);
+      // Quick fade out
+      gainNode.gain.linearRampToValueAtTime(0, now + 1.0);
+
+      oscillator.start(now);
+      oscillator.stop(now + 1.0);
+
+      // Clean up when this oscillator ends
+      oscillator.onended = () => {
+        try {
+          oscillator.disconnect();
+          gainNode.disconnect();
+        } catch (e) {
+          // Ignore if already disconnected
+        }
+      };
+    };
+
+    // Start the first tone immediately
+    playToneInterval();
+
+    // Set up interval to play tone every 2 seconds (1s on, 1s off)
+    interval500Ref.current = setInterval(playToneInterval, 2000);
+  }, [audioContext, calibrationDb500, isPlaying500]);
+
+  const stopContinuousTone500 = useCallback(() => {
+    if (interval500Ref.current) {
+      clearInterval(interval500Ref.current);
+      interval500Ref.current = null;
+    }
+    
+    if (oscillator500Ref.current && gainNode500Ref.current) {
+      const now = audioContext?.currentTime || 0;
+      gainNode500Ref.current.gain.linearRampToValueAtTime(0, now + 0.05);
+      
+      setTimeout(() => {
+        if (oscillator500Ref.current) {
+          oscillator500Ref.current.stop();
+          oscillator500Ref.current.disconnect();
+          oscillator500Ref.current = null;
+        }
+        if (gainNode500Ref.current) {
+          gainNode500Ref.current.disconnect();
+          gainNode500Ref.current = null;
+        }
+        setIsPlaying500(false);
+      }, 60);
+    } else {
+      setIsPlaying500(false);
+    }
+  }, [audioContext]);
+
+  const updateToneVolume500 = useCallback((newDb: number) => {
+    if (gainNode500Ref.current && audioContext) {
+      const amplitude = Math.pow(10, (newDb - 100) / 20);
+      const now = audioContext.currentTime;
+      gainNode500Ref.current.gain.linearRampToValueAtTime(amplitude, now + 0.02);
+    }
+  }, [audioContext]);
+
   const handleNoiseLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNoiseLevelInput(value);
@@ -180,7 +270,12 @@ const EnvironmentCheck = () => {
       return;
     }
 
-    if (!calibrationData.isCalibrated) {
+    if (!calibrationData.isCalibrated500) {
+      toast.error('Please complete your personal calibration for 500Hz before proceeding');
+      return;
+    }
+
+    if (!calibrationData.isCalibrated1000) {
       toast.error('Please complete your personal calibration for 1000Hz before proceeding');
       return;
     }
@@ -189,12 +284,36 @@ const EnvironmentCheck = () => {
     toast.success('Environment check passed. Starting screening test...');
   };
 
+  const saveCalibration500 = () => {
+    updateCalibrationData({ 
+      referenceDb500: calibrationDb500,
+      isCalibrated500: true
+    });
+    toast.success(`Calibration saved! Your 15 dB reference for 500Hz is set to ${calibrationDb500} dB`);
+  };
+
   const saveCalibration = () => {
     updateCalibrationData({ 
-      referenceDb: calibrationDb,
-      isCalibrated: true
+      referenceDb1000: calibrationDb,
+      isCalibrated1000: true
     });
     toast.success(`Calibration saved! Your 15 dB reference for 1000Hz is set to ${calibrationDb} dB`);
+  };
+
+  const increaseDb500 = () => {
+    const newDb = Math.min(calibrationDb500 + 1, 80);
+    setCalibrationDb500(newDb);
+    if (isPlaying500) {
+      updateToneVolume500(newDb);
+    }
+  };
+
+  const decreaseDb500 = () => {
+    const newDb = Math.max(calibrationDb500 - 1, 0);
+    setCalibrationDb500(newDb);
+    if (isPlaying500) {
+      updateToneVolume500(newDb);
+    }
   };
 
   const increaseDb = () => {
@@ -275,7 +394,75 @@ const EnvironmentCheck = () => {
               </p>
             </div>
             
+            {/* 500Hz Calibration */}
             <div className="space-y-3">
+              <h4 className="font-medium text-medical-blue">500Hz Calibration</h4>
+              <div className="flex items-center justify-center space-x-3">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={decreaseDb500}
+                  disabled={calibrationDb500 <= 0}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                
+                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
+                  {calibrationDb500} dB
+                </div>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={increaseDb500}
+                  disabled={calibrationDb500 >= 80}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+
+                {!isPlaying500 ? (
+                  <Button 
+                    className="bg-medical-blue hover:bg-medical-blue-dark"
+                    onClick={startContinuousTone500}
+                  >
+                    <Volume className="h-4 w-4 mr-2" />
+                    Play 500Hz Tone
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline"
+                    className="border-red-600 text-red-600 hover:bg-red-50"
+                    onClick={stopContinuousTone500}
+                  >
+                    <VolumeX className="h-4 w-4 mr-2" />
+                    Stop Tone
+                  </Button>
+                )}
+                
+                <Button 
+                  variant="outline"
+                  className="border-green-600 text-green-600 hover:bg-green-50"
+                  onClick={saveCalibration500}
+                >
+                  <CircleCheck className="h-4 w-4 mr-2" />
+                  Save Calibration
+                </Button>
+              </div>
+            </div>
+
+            {calibrationData.isCalibrated500 && (
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <p className="text-sm text-green-800">
+                  ✓ Calibration saved! Your 15 dB reference for 500Hz is set to {calibrationData.referenceDb500} dB
+                </p>
+              </div>
+            )}
+
+            {/* 1000Hz Calibration */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-medical-blue">1000Hz Calibration</h4>
               <div className="flex items-center justify-center space-x-3">
                 <Button 
                   variant="outline"
@@ -331,10 +518,10 @@ const EnvironmentCheck = () => {
               </div>
             </div>
 
-            {calibrationData.isCalibrated && (
+            {calibrationData.isCalibrated1000 && (
               <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                 <p className="text-sm text-green-800">
-                  ✓ Calibration saved! Your 15 dB reference for 1000Hz is set to {calibrationData.referenceDb} dB
+                  ✓ Calibration saved! Your 15 dB reference for 1000Hz is set to {calibrationData.referenceDb1000} dB
                 </p>
               </div>
             )}

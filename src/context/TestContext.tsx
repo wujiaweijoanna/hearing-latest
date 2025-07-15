@@ -12,8 +12,10 @@ interface EnvironmentCheck {
 }
 
 interface CalibrationData {
-  referenceDb: number | null;
-  isCalibrated: boolean;
+  referenceDb500: number | null;
+  referenceDb1000: number | null;
+  isCalibrated500: boolean;
+  isCalibrated1000: boolean;
 }
 
 interface ThresholdResult {
@@ -72,8 +74,10 @@ const initialPatientInfo: PatientInfo = {
 };
 
 const initialCalibrationData: CalibrationData = {
-  referenceDb: null,
-  isCalibrated: false,
+  referenceDb500: null,
+  referenceDb1000: null,
+  isCalibrated500: false,
+  isCalibrated1000: false,
 };
 
 const TestContext = createContext<TestContextType | undefined>(undefined);
