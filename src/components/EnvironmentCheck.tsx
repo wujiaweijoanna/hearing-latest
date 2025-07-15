@@ -1,17 +1,67 @@
-
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useTest } from '../context/TestContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import { Mic, Volume, Circle, CircleCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 const EnvironmentCheck = () => {
-  const { environmentCheck, updateEnvironmentCheck, setCurrentPhase, patientInfo, updatePatientInfo } = useTest();
+  const { 
+    environmentCheck, 
+    updateEnvironmentCheck, 
+    setCurrentPhase, 
+    patientInfo, 
+    updatePatientInfo,
+    calibrationData,
+    updateCalibrationData 
+  } = useTest();
   const [noiseLevelInput, setNoiseLevelInput] = useState('');
+  const [calibrationDb, setCalibrationDb] = useState(30);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    const context = new AudioContext();
+    setAudioContext(context);
+    return () => {
+      context.close();
+    };
+  }, []);
+
+  const playCalibrationTone = useCallback(async () => {
+    if (!audioContext || isPlaying) return;
+    if (audioContext.state === 'suspended') await audioContext.resume();
+
+    setIsPlaying(true);
+
+    const amplitude = Math.pow(10, (calibrationDb - 100) / 20);
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 1000; // 1000Hz tone
+    gainNode.gain.value = amplitude;
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    const now = audioContext.currentTime;
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.05);
+    gainNode.gain.setValueAtTime(amplitude, now + 1.5 - 0.05);
+    gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
+
+    oscillator.start(now);
+    oscillator.stop(now + 1.5);
+
+    oscillator.onended = () => {
+      setIsPlaying(false);
+    };
+  }, [audioContext, calibrationDb, isPlaying]);
 
   const handleNoiseLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -59,8 +109,21 @@ const EnvironmentCheck = () => {
       return;
     }
 
+    if (!calibrationData.isCalibrated) {
+      toast.error('Please complete your personal calibration for 1000Hz before proceeding');
+      return;
+    }
+
     setCurrentPhase('screening');
     toast.success('Environment check passed. Starting screening test...');
+  };
+
+  const saveCalibration = () => {
+    updateCalibrationData({ 
+      referenceDb: calibrationDb,
+      isCalibrated: true
+    });
+    toast.success(`Calibration saved! Your 15 dB reference for 1000Hz is set to ${calibrationDb} dB`);
   };
 
   return (
@@ -108,6 +171,74 @@ const EnvironmentCheck = () => {
                 onChange={(e) => updatePatientInfo({ notes: e.target.value })}
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8">
+        <CardHeader className="bg-medical-blue-light border-b">
+          <CardTitle className="text-medical-blue">Personal Calibration</CardTitle>
+          <CardDescription>Set your personal 15 dB reference for 1000Hz tone</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6 space-y-4">
+          <div className="space-y-4">
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-800">
+                Drag the slider until you can "just barely hear" the 1000Hz tone, then click Save. 
+                This becomes your personal 15 dB reference for the test.
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Volume className="h-5 w-5 text-medical-blue" />
+                <Label htmlFor="calibration-db" className="text-base font-medium">
+                  Calibration Tone Level: {calibrationDb} dB
+                </Label>
+              </div>
+              <Slider
+                id="calibration-db"
+                value={[calibrationDb]}
+                onValueChange={(value) => setCalibrationDb(value[0])}
+                min={0}
+                max={80}
+                step={1}
+                className="w-full"
+                aria-label="Calibration Tone Level"
+              />
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>0 dB</span>
+                <span>Current: {calibrationDb} dB</span>
+                <span>80 dB</span>
+              </div>
+            </div>
+
+            <div className="flex space-x-4">
+              <Button 
+                className="bg-medical-blue hover:bg-medical-blue-dark"
+                onClick={playCalibrationTone}
+                disabled={isPlaying}
+              >
+                <Volume className="h-4 w-4 mr-2" />
+                {isPlaying ? 'Playing 1000Hz Tone...' : 'Play 1000Hz Tone'}
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-green-600 text-green-600 hover:bg-green-50"
+                onClick={saveCalibration}
+              >
+                <CircleCheck className="h-4 w-4 mr-2" />
+                Save Calibration
+              </Button>
+            </div>
+
+            {calibrationData.isCalibrated && (
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <p className="text-sm text-green-800">
+                  ✓ Calibration saved! Your 15 dB reference for 1000Hz is set to {calibrationData.referenceDb} dB
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -11,6 +11,11 @@ interface EnvironmentCheck {
   headphonesConfirmed: boolean;
 }
 
+interface CalibrationData {
+  referenceDb: number | null;
+  isCalibrated: boolean;
+}
+
 interface ThresholdResult {
   ear: Ear;
   frequency: Frequency;
@@ -23,6 +28,8 @@ interface TestContextType {
   setCurrentPhase: React.Dispatch<React.SetStateAction<TestPhase>>;
   environmentCheck: EnvironmentCheck;
   updateEnvironmentCheck: (check: Partial<EnvironmentCheck>) => void;
+  calibrationData: CalibrationData;
+  updateCalibrationData: (data: Partial<CalibrationData>) => void;
   currentEar: Ear;
   setCurrentEar: React.Dispatch<React.SetStateAction<Ear>>;
   currentFrequency: Frequency;
@@ -64,11 +71,17 @@ const initialPatientInfo: PatientInfo = {
   notes: '',
 };
 
+const initialCalibrationData: CalibrationData = {
+  referenceDb: null,
+  isCalibrated: false,
+};
+
 const TestContext = createContext<TestContextType | undefined>(undefined);
 
 export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentPhase, setCurrentPhase] = useState<TestPhase>('environment');
   const [environmentCheck, setEnvironmentCheck] = useState<EnvironmentCheck>(initialEnvironmentCheck);
+  const [calibrationData, setCalibrationData] = useState<CalibrationData>(initialCalibrationData);
   const [currentEar, setCurrentEar] = useState<Ear>('right');
   const [currentFrequency, setCurrentFrequency] = useState<Frequency>(500);
   const [currentDb, setCurrentDb] = useState<number>(20);
@@ -83,6 +96,10 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setEnvironmentCheck({ ...environmentCheck, ...check });
   };
 
+  const updateCalibrationData = (data: Partial<CalibrationData>) => {
+    setCalibrationData({ ...calibrationData, ...data });
+  };
+
   const addThresholdResult = (result: ThresholdResult) => {
     setThresholdResults(prev => [...prev, result]);
   };
@@ -94,6 +111,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const resetTest = () => {
     setCurrentPhase('environment');
     setEnvironmentCheck(initialEnvironmentCheck);
+    setCalibrationData(initialCalibrationData);
     setCurrentEar('right');
     setCurrentFrequency(500);
     setCurrentDb(20);
@@ -112,6 +130,8 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setCurrentPhase,
         environmentCheck,
         updateEnvironmentCheck,
+        calibrationData,
+        updateCalibrationData,
         currentEar,
         setCurrentEar,
         currentFrequency,

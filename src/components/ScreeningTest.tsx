@@ -14,7 +14,8 @@ const ScreeningTest = () => {
     setCurrentPhase,
     thresholdResults, addThresholdResult,
     startTime, setStartTime,
-    remarks, setRemarks
+    remarks, setRemarks,
+    calibrationData
   } = useTest();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -59,7 +60,16 @@ const ScreeningTest = () => {
 
     setIsPlaying(true);
 
-    const amplitude = Math.pow(10, (dB - 100) / 20);
+    // Apply calibration offset for 1000Hz tones
+    let adjustedDb = dB;
+    if (frequency === 1000 && calibrationData.isCalibrated && calibrationData.referenceDb !== null) {
+      // The user's calibration reference becomes their personal 15dB threshold
+      // So we need to adjust all 1000Hz tones relative to this reference
+      const calibrationOffset = calibrationData.referenceDb - 15;
+      adjustedDb = dB + calibrationOffset;
+    }
+
+    const amplitude = Math.pow(10, (adjustedDb - 100) / 20);
 
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -86,7 +96,7 @@ const ScreeningTest = () => {
     oscillator.onended = () => {
       setIsPlaying(false);
     };
-  }, [audioContext]);
+  }, [audioContext, calibrationData]);
 
   const playInstructions = useCallback(async () => {
     setIsPlayingInstructions(true);
