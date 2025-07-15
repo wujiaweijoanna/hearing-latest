@@ -296,7 +296,7 @@ const ResultsView = () => {
               {hasFailedFrequency && (
                 <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <h3 className="font-semibold text-lg text-red-700 mb-2">Referral Recommendation</h3>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 text-justify">
                     Based on the testing results, a referral to a licensed audiologist is recommended for a full diagnostic assessment.
                   </p>
                 </div>
@@ -304,10 +304,8 @@ const ResultsView = () => {
               
               <div className="mt-6 p-4 bg-gray-50 border rounded-lg">
                 <h3 className="font-semibold text-sm text-gray-700 mb-2">Disclaimer</h3>
-                <p className="text-xs text-gray-500">
-                  This hearing screening was conducted using a calibrated device and follows internationally recognized screening guidelines.
-                  It is not a substitute for a diagnostic assessment by a licensed audiologist.
-                  Results indicate either a "Pass" or "Refer" recommendation only.
+                <p className="text-xs text-gray-500 text-justify">
+                  This hearing screening is for preliminary use only and is not a diagnostic test. It does not replace an audiologist's assessment. Results indicate only "Pass" or "Refer." For concerns about hearing, please consult a hearing professional.
                 </p>
               </div>
             </div>
