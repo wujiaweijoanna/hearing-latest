@@ -233,14 +233,14 @@ const EnvironmentCheck = () => {
 
       <Card className="mb-8">
         <CardHeader className="bg-medical-blue-light border-b">
-          <CardTitle className="text-medical-blue">Personal Calibration</CardTitle>
-          <CardDescription>Set your personal 15 dB reference for 1000Hz tone</CardDescription>
+          <CardTitle className="text-medical-blue">Calibration Check</CardTitle>
+          <CardDescription>Establish your hearing threshold for accurate test results</CardDescription>
         </CardHeader>
         <CardContent className="pt-6 space-y-4">
           <div className="space-y-4">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-800">
-                Click "Play 1000Hz Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until you can "just barely hear" it, then click Save.
+                Click "Play Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until the first time you cannot hear the sound, then click Save.
               </p>
             </div>
             
