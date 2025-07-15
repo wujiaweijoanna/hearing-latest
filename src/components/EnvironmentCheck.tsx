@@ -1,12 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useTest } from '../context/TestContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
-import { Mic, Volume, Circle, CircleCheck } from 'lucide-react';
+import { Mic, Volume, Circle, CircleCheck, VolumeX, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const EnvironmentCheck = () => {
@@ -23,6 +22,9 @@ const EnvironmentCheck = () => {
   const [calibrationDb, setCalibrationDb] = useState(30);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const isMounted = useRef(false);
 
   useEffect(() => {
     const context = new AudioContext();
@@ -32,7 +34,21 @@ const EnvironmentCheck = () => {
     };
   }, []);
 
-  const playCalibrationTone = useCallback(async () => {
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
+      }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  const startContinuousTone = useCallback(async () => {
     if (!audioContext || isPlaying) return;
     if (audioContext.state === 'suspended') await audioContext.resume();
 
@@ -52,16 +68,40 @@ const EnvironmentCheck = () => {
     const now = audioContext.currentTime;
     gainNode.gain.setValueAtTime(0, now);
     gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.05);
-    gainNode.gain.setValueAtTime(amplitude, now + 1.5 - 0.05);
-    gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
 
     oscillator.start(now);
-    oscillator.stop(now + 1.5);
 
-    oscillator.onended = () => {
-      setIsPlaying(false);
-    };
+    oscillatorRef.current = oscillator;
+    gainNodeRef.current = gainNode;
   }, [audioContext, calibrationDb, isPlaying]);
+
+  const stopContinuousTone = useCallback(() => {
+    if (oscillatorRef.current && gainNodeRef.current) {
+      const now = audioContext?.currentTime || 0;
+      gainNodeRef.current.gain.linearRampToValueAtTime(0, now + 0.05);
+      
+      setTimeout(() => {
+        if (oscillatorRef.current) {
+          oscillatorRef.current.stop();
+          oscillatorRef.current.disconnect();
+          oscillatorRef.current = null;
+        }
+        if (gainNodeRef.current) {
+          gainNodeRef.current.disconnect();
+          gainNodeRef.current = null;
+        }
+        setIsPlaying(false);
+      }, 60);
+    }
+  }, [audioContext]);
+
+  const updateToneVolume = useCallback((newDb: number) => {
+    if (gainNodeRef.current && audioContext) {
+      const amplitude = Math.pow(10, (newDb - 100) / 20);
+      const now = audioContext.currentTime;
+      gainNodeRef.current.gain.linearRampToValueAtTime(amplitude, now + 0.02);
+    }
+  }, [audioContext]);
 
   const handleNoiseLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -126,6 +166,22 @@ const EnvironmentCheck = () => {
     toast.success(`Calibration saved! Your 15 dB reference for 1000Hz is set to ${calibrationDb} dB`);
   };
 
+  const increaseDb = () => {
+    const newDb = Math.min(calibrationDb + 1, 80);
+    setCalibrationDb(newDb);
+    if (isPlaying) {
+      updateToneVolume(newDb);
+    }
+  };
+
+  const decreaseDb = () => {
+    const newDb = Math.max(calibrationDb - 1, 0);
+    setCalibrationDb(newDb);
+    if (isPlaying) {
+      updateToneVolume(newDb);
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-3xl py-8">
       <Card className="mb-8">
@@ -184,44 +240,72 @@ const EnvironmentCheck = () => {
           <div className="space-y-4">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-800">
-                Drag the slider until you can "just barely hear" the 1000Hz tone, then click Save. 
-                This becomes your personal 15 dB reference for the test.
+                Click "Play 1000Hz Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until you can "just barely hear" it, then click Save.
               </p>
             </div>
             
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Volume className="h-5 w-5 text-medical-blue" />
-                <Label htmlFor="calibration-db" className="text-base font-medium">
+                <Label className="text-base font-medium">
                   Calibration Tone Level: {calibrationDb} dB
                 </Label>
               </div>
-              <Slider
-                id="calibration-db"
-                value={[calibrationDb]}
-                onValueChange={(value) => setCalibrationDb(value[0])}
-                min={0}
-                max={80}
-                step={1}
-                className="w-full"
-                aria-label="Calibration Tone Level"
-              />
+              
+              <div className="flex items-center justify-center space-x-2">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={decreaseDb}
+                  disabled={calibrationDb <= 0}
+                >
+                  <Minus className="h-4 w-4" />
+                  <span className="ml-1">Quieter</span>
+                </Button>
+                
+                <div className="px-4 py-2 bg-gray-100 rounded-md min-w-[80px] text-center font-medium">
+                  {calibrationDb} dB
+                </div>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={increaseDb}
+                  disabled={calibrationDb >= 80}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="ml-1">Louder</span>
+                </Button>
+              </div>
+              
               <div className="flex justify-between text-sm text-gray-500">
-                <span>0 dB</span>
-                <span>Current: {calibrationDb} dB</span>
-                <span>80 dB</span>
+                <span>0 dB (Silent)</span>
+                <span>80 dB (Loud)</span>
               </div>
             </div>
 
-            <div className="flex space-x-4">
-              <Button 
-                className="bg-medical-blue hover:bg-medical-blue-dark"
-                onClick={playCalibrationTone}
-                disabled={isPlaying}
-              >
-                <Volume className="h-4 w-4 mr-2" />
-                {isPlaying ? 'Playing 1000Hz Tone...' : 'Play 1000Hz Tone'}
-              </Button>
+            <div className="flex space-x-4 justify-center">
+              {!isPlaying ? (
+                <Button 
+                  className="bg-medical-blue hover:bg-medical-blue-dark"
+                  onClick={startContinuousTone}
+                >
+                  <Volume className="h-4 w-4 mr-2" />
+                  Play 1000Hz Tone
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline"
+                  className="border-red-600 text-red-600 hover:bg-red-50"
+                  onClick={stopContinuousTone}
+                >
+                  <VolumeX className="h-4 w-4 mr-2" />
+                  Stop Tone
+                </Button>
+              )}
+              
               <Button 
                 variant="outline"
                 className="border-green-600 text-green-600 hover:bg-green-50"
