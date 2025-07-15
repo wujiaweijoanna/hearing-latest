@@ -245,14 +245,7 @@ const EnvironmentCheck = () => {
             </div>
             
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Volume className="h-5 w-5 text-medical-blue" />
-                <Label className="text-base font-medium">
-                  Calibration Tone Level: {calibrationDb} dB
-                </Label>
-              </div>
-              
-              <div className="flex items-center justify-center space-x-2">
+              <div className="flex items-center justify-center space-x-3">
                 <Button 
                   variant="outline"
                   size="sm"
@@ -261,10 +254,9 @@ const EnvironmentCheck = () => {
                   disabled={calibrationDb <= 0}
                 >
                   <Minus className="h-4 w-4" />
-                  <span className="ml-1">Quieter</span>
                 </Button>
                 
-                <div className="px-4 py-2 bg-gray-100 rounded-md min-w-[80px] text-center font-medium">
+                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
                   {calibrationDb} dB
                 </div>
                 
@@ -276,44 +268,36 @@ const EnvironmentCheck = () => {
                   disabled={calibrationDb >= 80}
                 >
                   <Plus className="h-4 w-4" />
-                  <span className="ml-1">Louder</span>
                 </Button>
-              </div>
-              
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>0 dB (Silent)</span>
-                <span>80 dB (Loud)</span>
-              </div>
-            </div>
 
-            <div className="flex space-x-4 justify-center">
-              {!isPlaying ? (
-                <Button 
-                  className="bg-medical-blue hover:bg-medical-blue-dark"
-                  onClick={startContinuousTone}
-                >
-                  <Volume className="h-4 w-4 mr-2" />
-                  Play 1000Hz Tone
-                </Button>
-              ) : (
+                {!isPlaying ? (
+                  <Button 
+                    className="bg-medical-blue hover:bg-medical-blue-dark"
+                    onClick={startContinuousTone}
+                  >
+                    <Volume className="h-4 w-4 mr-2" />
+                    Play 1000Hz Tone
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline"
+                    className="border-red-600 text-red-600 hover:bg-red-50"
+                    onClick={stopContinuousTone}
+                  >
+                    <VolumeX className="h-4 w-4 mr-2" />
+                    Stop Tone
+                  </Button>
+                )}
+                
                 <Button 
                   variant="outline"
-                  className="border-red-600 text-red-600 hover:bg-red-50"
-                  onClick={stopContinuousTone}
+                  className="border-green-600 text-green-600 hover:bg-green-50"
+                  onClick={saveCalibration}
                 >
-                  <VolumeX className="h-4 w-4 mr-2" />
-                  Stop Tone
+                  <CircleCheck className="h-4 w-4 mr-2" />
+                  Save Calibration
                 </Button>
-              )}
-              
-              <Button 
-                variant="outline"
-                className="border-green-600 text-green-600 hover:bg-green-50"
-                onClick={saveCalibration}
-              >
-                <CircleCheck className="h-4 w-4 mr-2" />
-                Save Calibration
-              </Button>
+              </div>
             </div>
 
             {calibrationData.isCalibrated && (
