@@ -24,6 +24,7 @@ const EnvironmentCheck = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -54,28 +55,56 @@ const EnvironmentCheck = () => {
 
     setIsPlaying(true);
 
-    const amplitude = Math.pow(10, (calibrationDb - 100) / 20);
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    const playToneInterval = () => {
+      if (!isMounted.current) return;
+      
+      const amplitude = Math.pow(10, (calibrationDb - 100) / 20);
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
 
-    oscillator.type = 'sine';
-    oscillator.frequency.value = 1000; // 1000Hz tone
-    gainNode.gain.value = amplitude;
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 1000; // 1000Hz tone
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+      const now = audioContext.currentTime;
+      // Start with zero gain
+      gainNode.gain.setValueAtTime(0, now);
+      // Quick fade in
+      gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.01);
+      // Hold at target amplitude
+      gainNode.gain.setValueAtTime(amplitude, now + 0.99);
+      // Quick fade out
+      gainNode.gain.linearRampToValueAtTime(0, now + 1.0);
 
-    const now = audioContext.currentTime;
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.05);
+      oscillator.start(now);
+      oscillator.stop(now + 1.0);
 
-    oscillator.start(now);
+      // Clean up when this oscillator ends
+      oscillator.onended = () => {
+        try {
+          oscillator.disconnect();
+          gainNode.disconnect();
+        } catch (e) {
+          // Ignore if already disconnected
+        }
+      };
+    };
 
-    oscillatorRef.current = oscillator;
-    gainNodeRef.current = gainNode;
+    // Start the first tone immediately
+    playToneInterval();
+
+    // Set up interval to play tone every 2 seconds (1s on, 1s off)
+    intervalRef.current = setInterval(playToneInterval, 2000);
   }, [audioContext, calibrationDb, isPlaying]);
 
   const stopContinuousTone = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    
     if (oscillatorRef.current && gainNodeRef.current) {
       const now = audioContext?.currentTime || 0;
       gainNodeRef.current.gain.linearRampToValueAtTime(0, now + 0.05);
@@ -92,6 +121,8 @@ const EnvironmentCheck = () => {
         }
         setIsPlaying(false);
       }, 60);
+    } else {
+      setIsPlaying(false);
     }
   }, [audioContext]);
 
