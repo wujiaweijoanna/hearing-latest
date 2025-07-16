@@ -60,7 +60,7 @@ const ScreeningTest = () => {
 
     setIsPlaying(true);
 
-    // Apply calibration offset for both 500Hz and 1000Hz tones
+    // Apply calibration offset for 500Hz, 1000Hz, and 2000Hz tones
     let adjustedDb = dB;
     if (frequency === 1000 && calibrationData.isCalibrated1000 && calibrationData.referenceDb1000 !== null) {
       // The user's calibration reference becomes their personal 15dB threshold
@@ -71,6 +71,11 @@ const ScreeningTest = () => {
       // The user's calibration reference becomes their personal 15dB threshold
       // So we need to adjust all 500Hz tones relative to this reference
       const calibrationOffset = calibrationData.referenceDb500 - 15;
+      adjustedDb = dB + calibrationOffset;
+    } else if (frequency === 2000 && calibrationData.isCalibrated2000 && calibrationData.referenceDb2000 !== null) {
+      // The user's calibration reference becomes their personal 15dB threshold
+      // So we need to adjust all 2000Hz tones relative to this reference
+      const calibrationOffset = calibrationData.referenceDb2000 - 15;
       adjustedDb = dB + calibrationOffset;
     }
 
