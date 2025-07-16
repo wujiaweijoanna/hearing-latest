@@ -182,6 +182,14 @@ const ScreeningTest = () => {
     }
   };
 
+  const replayCurrentTone = () => {
+    if (isPlaying || isPlayingInstructions || !testStarted) return;
+    
+    // Replay the same frequency and dB level
+    playTone(currentFrequency, currentDb, 1.5, currentEar);
+    setTestTonePlayed(true);
+  };
+
   const recordResponse = (heard: boolean) => {
     if (isPlaying) return;
   
@@ -329,6 +337,15 @@ const ScreeningTest = () => {
                     onClick={() => recordResponse(true)}
                   >
                     Responded
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="col-span-2 h-16 border-2 border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100"
+                    disabled={!testTonePlayed || isPlaying}
+                    onClick={replayCurrentTone}
+                  >
+                    Replay Tone
                   </Button>
                 </div>
               )}
