@@ -15,9 +15,11 @@ interface CalibrationData {
   referenceDb500: number | null;
   referenceDb1000: number | null;
   referenceDb2000: number | null;
+  referenceDb4000: number | null;
   isCalibrated500: boolean;
   isCalibrated1000: boolean;
   isCalibrated2000: boolean;
+  isCalibrated4000: boolean;
 }
 
 interface ThresholdResult {
@@ -79,9 +81,11 @@ const initialCalibrationData: CalibrationData = {
   referenceDb500: null,
   referenceDb1000: null,
   referenceDb2000: null,
+  referenceDb4000: null,
   isCalibrated500: false,
   isCalibrated1000: false,
   isCalibrated2000: false,
+  isCalibrated4000: false,
 };
 
 const TestContext = createContext<TestContextType | undefined>(undefined);

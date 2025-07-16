@@ -22,19 +22,24 @@ const EnvironmentCheck = () => {
   const [calibrationDb, setCalibrationDb] = useState(30);
   const [calibrationDb500, setCalibrationDb500] = useState(30);
   const [calibrationDb2000, setCalibrationDb2000] = useState(30);
+  const [calibrationDb4000, setCalibrationDb4000] = useState(30);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlaying500, setIsPlaying500] = useState(false);
   const [isPlaying2000, setIsPlaying2000] = useState(false);
+  const [isPlaying4000, setIsPlaying4000] = useState(false);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const oscillator500Ref = useRef<OscillatorNode | null>(null);
   const gainNode500Ref = useRef<GainNode | null>(null);
   const oscillator2000Ref = useRef<OscillatorNode | null>(null);
   const gainNode2000Ref = useRef<GainNode | null>(null);
+  const oscillator4000Ref = useRef<OscillatorNode | null>(null);
+  const gainNode4000Ref = useRef<GainNode | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const interval500Ref = useRef<NodeJS.Timeout | null>(null);
   const interval2000Ref = useRef<NodeJS.Timeout | null>(null);
+  const interval4000Ref = useRef<NodeJS.Timeout | null>(null);
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -314,6 +319,91 @@ const EnvironmentCheck = () => {
     }
   }, [audioContext]);
 
+  const startContinuousTone4000 = useCallback(async () => {
+    if (!audioContext || isPlaying4000) return;
+    if (audioContext.state === 'suspended') await audioContext.resume();
+
+    setIsPlaying4000(true);
+
+    const playToneInterval = () => {
+      if (!isMounted.current) return;
+      
+      const amplitude = Math.pow(10, (calibrationDb4000 - 100) / 20);
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 4000; // 4000Hz tone
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      const now = audioContext.currentTime;
+      // Start with zero gain
+      gainNode.gain.setValueAtTime(0, now);
+      // Quick fade in
+      gainNode.gain.linearRampToValueAtTime(amplitude, now + 0.01);
+      // Hold at target amplitude
+      gainNode.gain.setValueAtTime(amplitude, now + 0.99);
+      // Quick fade out
+      gainNode.gain.linearRampToValueAtTime(0, now + 1.0);
+
+      oscillator.start(now);
+      oscillator.stop(now + 1.0);
+
+      // Clean up when this oscillator ends
+      oscillator.onended = () => {
+        try {
+          oscillator.disconnect();
+          gainNode.disconnect();
+        } catch (e) {
+          // Ignore if already disconnected
+        }
+      };
+    };
+
+    // Start the first tone immediately
+    playToneInterval();
+
+    // Set up interval to play tone every 2 seconds (1s on, 1s off)
+    interval4000Ref.current = setInterval(playToneInterval, 2000);
+  }, [audioContext, calibrationDb4000, isPlaying4000]);
+
+  const stopContinuousTone4000 = useCallback(() => {
+    if (interval4000Ref.current) {
+      clearInterval(interval4000Ref.current);
+      interval4000Ref.current = null;
+    }
+    
+    if (oscillator4000Ref.current && gainNode4000Ref.current) {
+      const now = audioContext?.currentTime || 0;
+      gainNode4000Ref.current.gain.linearRampToValueAtTime(0, now + 0.05);
+      
+      setTimeout(() => {
+        if (oscillator4000Ref.current) {
+          oscillator4000Ref.current.stop();
+          oscillator4000Ref.current.disconnect();
+          oscillator4000Ref.current = null;
+        }
+        if (gainNode4000Ref.current) {
+          gainNode4000Ref.current.disconnect();
+          gainNode4000Ref.current = null;
+        }
+        setIsPlaying4000(false);
+      }, 60);
+    } else {
+      setIsPlaying4000(false);
+    }
+  }, [audioContext]);
+
+  const updateToneVolume4000 = useCallback((newDb: number) => {
+    if (gainNode4000Ref.current && audioContext) {
+      const amplitude = Math.pow(10, (newDb - 100) / 20);
+      const now = audioContext.currentTime;
+      gainNode4000Ref.current.gain.linearRampToValueAtTime(amplitude, now + 0.02);
+    }
+  }, [audioContext]);
+
   const handleNoiseLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNoiseLevelInput(value);
@@ -375,6 +465,11 @@ const EnvironmentCheck = () => {
       return;
     }
 
+    if (!calibrationData.isCalibrated4000) {
+      toast.error('Please complete your personal calibration for 4000Hz before proceeding');
+      return;
+    }
+
     setCurrentPhase('screening');
     toast.success('Environment check passed. Starting screening test...');
   };
@@ -401,6 +496,14 @@ const EnvironmentCheck = () => {
       isCalibrated2000: true
     });
     toast.success(`Calibration saved! Your 15 dB reference for 2000Hz is set to ${calibrationDb2000} dB`);
+  };
+
+  const saveCalibration4000 = () => {
+    updateCalibrationData({ 
+      referenceDb4000: calibrationDb4000,
+      isCalibrated4000: true
+    });
+    toast.success(`Calibration saved! Your 15 dB reference for 4000Hz is set to ${calibrationDb4000} dB`);
   };
 
   const increaseDb500 = () => {
@@ -448,6 +551,22 @@ const EnvironmentCheck = () => {
     setCalibrationDb2000(newDb);
     if (isPlaying2000) {
       updateToneVolume2000(newDb);
+    }
+  };
+
+  const increaseDb4000 = () => {
+    const newDb = Math.min(calibrationDb4000 + 1, 80);
+    setCalibrationDb4000(newDb);
+    if (isPlaying4000) {
+      updateToneVolume4000(newDb);
+    }
+  };
+
+  const decreaseDb4000 = () => {
+    const newDb = Math.max(calibrationDb4000 - 1, 0);
+    setCalibrationDb4000(newDb);
+    if (isPlaying4000) {
+      updateToneVolume4000(newDb);
     }
   };
 
@@ -707,6 +826,72 @@ const EnvironmentCheck = () => {
               <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                 <p className="text-sm text-green-800">
                   ✓ Calibration saved! Your 15 dB reference for 2000Hz is set to {calibrationData.referenceDb2000} dB
+                </p>
+              </div>
+            )}
+
+            {/* 4000Hz Calibration */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-medical-blue">4000Hz Calibration</h4>
+              <div className="flex items-center justify-center space-x-3">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={decreaseDb4000}
+                  disabled={calibrationDb4000 <= 0}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                
+                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
+                  {calibrationDb4000} dB
+                </div>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={increaseDb4000}
+                  disabled={calibrationDb4000 >= 80}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+
+                {!isPlaying4000 ? (
+                  <Button 
+                    className="bg-medical-blue hover:bg-medical-blue-dark"
+                    onClick={startContinuousTone4000}
+                  >
+                    <Volume className="h-4 w-4 mr-2" />
+                    Play 4000Hz Tone
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline"
+                    className="border-red-600 text-red-600 hover:bg-red-50"
+                    onClick={stopContinuousTone4000}
+                  >
+                    <VolumeX className="h-4 w-4 mr-2" />
+                    Stop Tone
+                  </Button>
+                )}
+                
+                <Button 
+                  variant="outline"
+                  className="border-green-600 text-green-600 hover:bg-green-50"
+                  onClick={saveCalibration4000}
+                >
+                  <CircleCheck className="h-4 w-4 mr-2" />
+                  Save Calibration
+                </Button>
+              </div>
+            </div>
+
+            {calibrationData.isCalibrated4000 && (
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <p className="text-sm text-green-800">
+                  ✓ Calibration saved! Your 15 dB reference for 4000Hz is set to {calibrationData.referenceDb4000} dB
                 </p>
               </div>
             )}
