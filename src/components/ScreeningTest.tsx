@@ -194,14 +194,14 @@ const ScreeningTest = () => {
     };
   
     if (heard) {
-      if (phase === 'descending' && currentDb > 20) {
+      if (phase === 'descending' && currentDb > 30) {
         handleNextTone(currentDb - 10);
       } else {
         addThresholdResult({
           ear: currentEar,
           frequency: currentFrequency,
           threshold: currentDb,
-          passed: currentDb <= 20,
+          passed: currentDb <= 30,
         });
         setTimeout(moveToNextFrequency, 3000);
       }

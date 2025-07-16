@@ -187,8 +187,8 @@ const ResultsView = () => {
               </CardTitle>
               <CardDescription>
                 {hasFailedFrequency 
-                  ? 'One or more frequencies exceeded the 20 dB threshold. Referral recommended.'
-                  : 'All frequencies passed at 20 dB HL threshold.'
+                  ? 'One or more frequencies exceeded the 30 dB threshold. Referral recommended.'
+                  : 'All frequencies passed at 30 dB HL threshold.'
                 }
               </CardDescription>
             </div>
@@ -247,7 +247,7 @@ const ResultsView = () => {
                               {result.threshold >= 60 ? '>50' : result.threshold} dB {result.passed ? '(PASS)' : '(FAIL)'}
                             </span>
                           ) : (
-                            <span className="text-gray-400">20 dB(PASS)</span>
+                            <span className="text-gray-400">30 dB(PASS)</span>
                           )}
                         </div>
                       );
@@ -268,7 +268,7 @@ const ResultsView = () => {
                               {result.threshold >= 60 ? '>50' : result.threshold} dB {result.passed ? '(PASS)' : '(FAIL)'}
                             </span>
                           ) : (
-                            <span className="text-gray-400">20 dB(PASS)</span>
+                            <span className="text-gray-400">30 dB(PASS)</span>
                           )}
                         </div>
                       );

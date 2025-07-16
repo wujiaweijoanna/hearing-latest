@@ -60,7 +60,7 @@ const Audiogram: React.FC<AudiogramProps> = ({
             left: `${getPositionX(500)}px`,
             top: `${getPositionY(0)}px`,
             width: `${getPositionX(4000) - getPositionX(500)}px`,
-            height: `${getPositionY(20) - getPositionY(0)}px`,
+            height: `${getPositionY(30) - getPositionY(0)}px`,
             zIndex: 0
           }}
         />
