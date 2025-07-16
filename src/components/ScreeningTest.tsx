@@ -12,10 +12,11 @@ const ScreeningTest = () => {
     currentFrequency, setCurrentFrequency,
     currentDb, setCurrentDb,
     setCurrentPhase,
-    thresholdResults, addThresholdResult,
+    thresholdResults, addThresholdResult, clearThresholdResults,
     startTime, setStartTime,
     remarks, setRemarks,
-    calibrationData
+    calibrationData,
+    resetTest
   } = useTest();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -190,6 +191,27 @@ const ScreeningTest = () => {
     setTestTonePlayed(true);
   };
 
+  const restartTest = () => {
+    if (isPlaying || isPlayingInstructions) return;
+    
+    // Reset only the screening test states, not the entire test context
+    setTestStarted(false);
+    setTestTonePlayed(false);
+    setCurrentEar('right');
+    setCurrentFrequency(500);
+    setCurrentDb(50);
+    setFrequencyIndex(0);
+    setPhase('descending');
+    setShowSaveButton(false);
+    setStartTime(null);
+    setRemarks('');
+    
+    // Clear threshold results to start fresh
+    clearThresholdResults();
+    
+    toast.success('Screening test restarted. Click "Start Hearing Test" to begin again.');
+  };
+
   const recordResponse = (heard: boolean) => {
     if (isPlaying) return;
   
@@ -320,32 +342,47 @@ const ScreeningTest = () => {
                   {isPlayingInstructions ? 'Playing Instructions...' : 'Start Hearing Test'}
                 </Button>
               ) : (
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    variant="outline"
-                    className="h-16 border-2 border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                    disabled={!testTonePlayed || isPlaying}
-                    onClick={() => recordResponse(false)}
-                  >
-                    No Response
-                  </Button>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      variant="outline"
+                      className="h-16 border-2 border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
+                      disabled={!testTonePlayed || isPlaying}
+                      onClick={() => recordResponse(false)}
+                    >
+                      No Response
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      className="h-16 border-2 border-green-200 bg-green-50 text-green-600 hover:bg-green-100"
+                      disabled={!testTonePlayed || isPlaying}
+                      onClick={() => recordResponse(true)}
+                    >
+                      Responded
+                    </Button>
+                  </div>
 
                   <Button
                     variant="outline"
-                    className="h-16 border-2 border-green-200 bg-green-50 text-green-600 hover:bg-green-100"
-                    disabled={!testTonePlayed || isPlaying}
-                    onClick={() => recordResponse(true)}
-                  >
-                    Responded
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="col-span-2 h-16 border-2 border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100"
+                    className="w-full h-12 border-2 border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100"
                     disabled={!testTonePlayed || isPlaying}
                     onClick={replayCurrentTone}
                   >
+                    <Volume className="h-4 w-4 mr-2" />
                     Replay Tone
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 border-2 border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100"
+                    disabled={isPlaying || isPlayingInstructions}
+                    onClick={restartTest}
+                  >
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Restart Test
                   </Button>
                 </div>
               )}

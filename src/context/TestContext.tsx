@@ -46,6 +46,7 @@ interface TestContextType {
   setResponseStatus: React.Dispatch<React.SetStateAction<ResponseStatus>>;
   thresholdResults: ThresholdResult[];
   addThresholdResult: (result: ThresholdResult) => void;
+  clearThresholdResults: () => void;
   patientInfo: PatientInfo;
   updatePatientInfo: (info: Partial<PatientInfo>) => void;
   resetTest: () => void;
@@ -116,6 +117,10 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setThresholdResults(prev => [...prev, result]);
   };
 
+  const clearThresholdResults = () => {
+    setThresholdResults([]);
+  };
+
   const updatePatientInfo = (info: Partial<PatientInfo>) => {
     setPatientInfo({ ...patientInfo, ...info });
   };
@@ -154,6 +159,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setResponseStatus,
         thresholdResults,
         addThresholdResult,
+        clearThresholdResults,
         patientInfo,
         updatePatientInfo,
         resetTest,
