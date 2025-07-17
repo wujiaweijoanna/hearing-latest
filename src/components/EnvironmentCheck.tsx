@@ -414,16 +414,12 @@ const EnvironmentCheck = () => {
     }
   };
 
-  const handleCalibrationChange = (checked: boolean) => {
-    updateEnvironmentCheck({ calibrationConfirmed: checked });
-  };
-
   const handleHeadphonesChange = (checked: boolean) => {
     updateEnvironmentCheck({ headphonesConfirmed: checked });
   };
 
   const handleContinue = () => {
-    const { noiseLevel, calibrationConfirmed, headphonesConfirmed } = environmentCheck;
+    const { noiseLevel, headphonesConfirmed } = environmentCheck;
     
     if (noiseLevel === null || isNaN(noiseLevel)) {
       toast.error('Please enter a valid noise level');
@@ -432,11 +428,6 @@ const EnvironmentCheck = () => {
     
     if (noiseLevel > 50) {
       toast.error('Ambient noise level is too high (must be below 50 dB SPL)');
-      return;
-    }
-    
-    if (!calibrationConfirmed) {
-      toast.error('Please confirm calibration check');
       return;
     }
     
@@ -930,22 +921,6 @@ const EnvironmentCheck = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <Checkbox 
-                id="calibration" 
-                checked={environmentCheck.calibrationConfirmed}
-                onCheckedChange={handleCalibrationChange}
-              />
-              <div>
-                <Label htmlFor="calibration" className="text-base font-medium">
-                  Calibration Check Confirmed
-                </Label>
-                <p className="text-sm text-gray-500">
-                  Biological listener with normal hearing can detect tones at 10 dB HL
-                </p>
-              </div>
-            </div>
-
             <div className="flex items-start space-x-3">
               <Checkbox 
                 id="headphones" 
