@@ -63,25 +63,25 @@ const ScreeningTest = () => {
 
     // Apply calibration offset for 500Hz, 1000Hz, 2000Hz, and 4000Hz tones
     let adjustedDb = dB;
-    if (frequency === 1000 && calibrationData.isCalibrated1000 && calibrationData.referenceDb1000 !== null) {
+    if (frequency === 1000 && calibrationData.isCalibrated1000 && calibrationData.appliedDb1000 !== null) {
       // The user's calibration reference becomes their personal 15dB threshold
       // So we need to adjust all 1000Hz tones relative to this reference
-      const calibrationOffset = calibrationData.referenceDb1000 - 15;
+      const calibrationOffset = calibrationData.appliedDb1000 - 15;
       adjustedDb = dB + calibrationOffset;
-    } else if (frequency === 500 && calibrationData.isCalibrated500 && calibrationData.referenceDb500 !== null) {
+    } else if (frequency === 500 && calibrationData.isCalibrated500 && calibrationData.appliedDb500 !== null) {
       // The user's calibration reference becomes their personal 15dB threshold
       // So we need to adjust all 500Hz tones relative to this reference
-      const calibrationOffset = calibrationData.referenceDb500 - 15;
+      const calibrationOffset = calibrationData.appliedDb500 - 15;
       adjustedDb = dB + calibrationOffset;
-    } else if (frequency === 2000 && calibrationData.isCalibrated2000 && calibrationData.referenceDb2000 !== null) {
+    } else if (frequency === 2000 && calibrationData.isCalibrated2000 && calibrationData.appliedDb2000 !== null) {
       // The user's calibration reference becomes their personal 15dB threshold
       // So we need to adjust all 2000Hz tones relative to this reference
-      const calibrationOffset = calibrationData.referenceDb2000 - 15;
+      const calibrationOffset = calibrationData.appliedDb2000 - 15;
       adjustedDb = dB + calibrationOffset;
-    } else if (frequency === 4000 && calibrationData.isCalibrated4000 && calibrationData.referenceDb4000 !== null) {
+    } else if (frequency === 4000 && calibrationData.isCalibrated4000 && calibrationData.appliedDb4000 !== null) {
       // The user's calibration reference becomes their personal 15dB threshold
       // So we need to adjust all 4000Hz tones relative to this reference
-      const calibrationOffset = calibrationData.referenceDb4000 - 15;
+      const calibrationOffset = calibrationData.appliedDb4000 - 15;
       adjustedDb = dB + calibrationOffset;
     }
 

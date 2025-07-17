@@ -16,7 +16,7 @@ const EnvironmentCheck = () => {
     patientInfo, 
     updatePatientInfo,
     calibrationData,
-    updateCalibrationData,
+    saveCalibrationForFrequency,
     isLoadingCalibration
   } = useTest();
   const [noiseLevelInput, setNoiseLevelInput] = useState('');
@@ -68,17 +68,20 @@ const EnvironmentCheck = () => {
 
   // Initialize calibration values from saved data
   useEffect(() => {
-    if (!isLoadingCalibration && calibrationData.referenceDb500 !== null) {
-      setCalibrationDb500(calibrationData.referenceDb500);
-    }
-    if (!isLoadingCalibration && calibrationData.referenceDb1000 !== null) {
-      setCalibrationDb(calibrationData.referenceDb1000);
-    }
-    if (!isLoadingCalibration && calibrationData.referenceDb2000 !== null) {
-      setCalibrationDb2000(calibrationData.referenceDb2000);
-    }
-    if (!isLoadingCalibration && calibrationData.referenceDb4000 !== null) {
-      setCalibrationDb4000(calibrationData.referenceDb4000);
+    if (!isLoadingCalibration) {
+      // Only update if we have valid applied values, otherwise keep the default 30
+      if (calibrationData.appliedDb500 !== null && !isNaN(calibrationData.appliedDb500)) {
+        setCalibrationDb500(calibrationData.appliedDb500);
+      }
+      if (calibrationData.appliedDb1000 !== null && !isNaN(calibrationData.appliedDb1000)) {
+        setCalibrationDb(calibrationData.appliedDb1000);
+      }
+      if (calibrationData.appliedDb2000 !== null && !isNaN(calibrationData.appliedDb2000)) {
+        setCalibrationDb2000(calibrationData.appliedDb2000);
+      }
+      if (calibrationData.appliedDb4000 !== null && !isNaN(calibrationData.appliedDb4000)) {
+        setCalibrationDb4000(calibrationData.appliedDb4000);
+      }
     }
   }, [isLoadingCalibration, calibrationData]);
 
@@ -534,11 +537,8 @@ const EnvironmentCheck = () => {
   const saveCalibration500 = async () => {
     setIsSavingCalibration(true);
     try {
-      await updateCalibrationData({ 
-        referenceDb500: calibrationDb500,
-        isCalibrated500: true
-      });
-      toast.success(`Calibration saved! Your 15 dB reference for 500Hz is set to ${calibrationDb500} dB`);
+      await saveCalibrationForFrequency(500, calibrationDb500);
+      toast.success(`Calibration saved! New value: ${calibrationDb500} dB. Applied: ${calibrationData.appliedDb500} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -549,11 +549,8 @@ const EnvironmentCheck = () => {
   const saveCalibration = async () => {
     setIsSavingCalibration(true);
     try {
-      await updateCalibrationData({ 
-        referenceDb1000: calibrationDb,
-        isCalibrated1000: true
-      });
-      toast.success(`Calibration saved! Your 15 dB reference for 1000Hz is set to ${calibrationDb} dB`);
+      await saveCalibrationForFrequency(1000, calibrationDb);
+      toast.success(`Calibration saved! New value: ${calibrationDb} dB. Applied: ${calibrationData.appliedDb1000} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -564,11 +561,8 @@ const EnvironmentCheck = () => {
   const saveCalibration2000 = async () => {
     setIsSavingCalibration(true);
     try {
-      await updateCalibrationData({ 
-        referenceDb2000: calibrationDb2000,
-        isCalibrated2000: true
-      });
-      toast.success(`Calibration saved! Your 15 dB reference for 2000Hz is set to ${calibrationDb2000} dB`);
+      await saveCalibrationForFrequency(2000, calibrationDb2000);
+      toast.success(`Calibration saved! New value: ${calibrationDb2000} dB. Applied: ${calibrationData.appliedDb2000} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -579,11 +573,8 @@ const EnvironmentCheck = () => {
   const saveCalibration4000 = async () => {
     setIsSavingCalibration(true);
     try {
-      await updateCalibrationData({ 
-        referenceDb4000: calibrationDb4000,
-        isCalibrated4000: true
-      });
-      toast.success(`Calibration saved! Your 15 dB reference for 4000Hz is set to ${calibrationDb4000} dB`);
+      await saveCalibrationForFrequency(4000, calibrationDb4000);
+      toast.success(`Calibration saved! New value: ${calibrationDb4000} dB. Applied: ${calibrationData.appliedDb4000} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -729,6 +720,7 @@ const EnvironmentCheck = () => {
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-800">
                 Click "Play Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until the first time you cannot hear the sound, then click Save.
+                The system will store your last 3 calibration values and use the minimum as your reference threshold.
               </p>
             </div>
             
@@ -795,7 +787,10 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated500 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibration saved! Reference: {calibrationData.referenceDb500} dB
+                      ✓ Calibrated! Applied: {calibrationData.appliedDb500} dB
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Values: [{calibrationData.referenceDb500Values.join(', ')}]
                     </p>
                   </div>
                 )}
@@ -862,7 +857,10 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated1000 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibration saved! Reference: {calibrationData.referenceDb1000} dB
+                      ✓ Calibrated! Applied: {calibrationData.appliedDb1000} dB
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Values: [{calibrationData.referenceDb1000Values.join(', ')}]
                     </p>
                   </div>
                 )}
@@ -932,7 +930,10 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated2000 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibration saved! Reference: {calibrationData.referenceDb2000} dB
+                      ✓ Calibrated! Applied: {calibrationData.appliedDb2000} dB
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Values: [{calibrationData.referenceDb2000Values.join(', ')}]
                     </p>
                   </div>
                 )}
@@ -999,7 +1000,10 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated4000 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibration saved! Reference: {calibrationData.referenceDb4000} dB
+                      ✓ Calibrated! Applied: {calibrationData.appliedDb4000} dB
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Values: [{calibrationData.referenceDb4000Values.join(', ')}]
                     </p>
                   </div>
                 )}

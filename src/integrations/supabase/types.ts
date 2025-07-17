@@ -13,10 +13,14 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          reference_db_500: number | null
-          reference_db_1000: number | null
-          reference_db_2000: number | null
-          reference_db_4000: number | null
+          reference_db_500_values: number[] | null
+          reference_db_1000_values: number[] | null
+          reference_db_2000_values: number[] | null
+          reference_db_4000_values: number[] | null
+          applied_db_500: number | null
+          applied_db_1000: number | null
+          applied_db_2000: number | null
+          applied_db_4000: number | null
           is_calibrated_500: boolean
           is_calibrated_1000: boolean
           is_calibrated_2000: boolean
@@ -27,10 +31,14 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          reference_db_500?: number | null
-          reference_db_1000?: number | null
-          reference_db_2000?: number | null
-          reference_db_4000?: number | null
+          reference_db_500_values?: number[] | null
+          reference_db_1000_values?: number[] | null
+          reference_db_2000_values?: number[] | null
+          reference_db_4000_values?: number[] | null
+          applied_db_500?: number | null
+          applied_db_1000?: number | null
+          applied_db_2000?: number | null
+          applied_db_4000?: number | null
           is_calibrated_500?: boolean
           is_calibrated_1000?: boolean
           is_calibrated_2000?: boolean
@@ -41,10 +49,14 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          reference_db_500?: number | null
-          reference_db_1000?: number | null
-          reference_db_2000?: number | null
-          reference_db_4000?: number | null
+          reference_db_500_values?: number[] | null
+          reference_db_1000_values?: number[] | null
+          reference_db_2000_values?: number[] | null
+          reference_db_4000_values?: number[] | null
+          applied_db_500?: number | null
+          applied_db_1000?: number | null
+          applied_db_2000?: number | null
+          applied_db_4000?: number | null
           is_calibrated_500?: boolean
           is_calibrated_1000?: boolean
           is_calibrated_2000?: boolean
@@ -217,7 +229,7 @@ export type Tables<
   }
     ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
   ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {

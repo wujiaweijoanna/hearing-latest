@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { loadCalibrationData, saveCalibrationData } from '@/lib/calibration';
+import { loadCalibrationData, saveCalibrationValue } from '@/lib/calibration';
 
 type Ear = 'right' | 'left';
 type TestPhase = 'environment' | 'screening' | 'threshold' | 'results';
@@ -17,10 +17,19 @@ interface CalibrationData {
   referenceDb1000: number | null;
   referenceDb2000: number | null;
   referenceDb4000: number | null;
+  appliedDb500: number | null;
+  appliedDb1000: number | null;
+  appliedDb2000: number | null;
+  appliedDb4000: number | null;
   isCalibrated500: boolean;
   isCalibrated1000: boolean;
   isCalibrated2000: boolean;
   isCalibrated4000: boolean;
+  // Arrays to store the latest 3 values for each frequency
+  referenceDb500Values: number[];
+  referenceDb1000Values: number[];
+  referenceDb2000Values: number[];
+  referenceDb4000Values: number[];
 }
 
 interface ThresholdResult {
@@ -36,7 +45,7 @@ interface TestContextType {
   environmentCheck: EnvironmentCheck;
   updateEnvironmentCheck: (check: Partial<EnvironmentCheck>) => void;
   calibrationData: CalibrationData;
-  updateCalibrationData: (data: Partial<CalibrationData>) => Promise<void>;
+  saveCalibrationForFrequency: (frequency: 500 | 1000 | 2000 | 4000, value: number) => Promise<void>;
   currentEar: Ear;
   setCurrentEar: React.Dispatch<React.SetStateAction<Ear>>;
   currentFrequency: Frequency;
@@ -85,10 +94,18 @@ const initialCalibrationData: CalibrationData = {
   referenceDb1000: null,
   referenceDb2000: null,
   referenceDb4000: null,
+  appliedDb500: null,
+  appliedDb1000: null,
+  appliedDb2000: null,
+  appliedDb4000: null,
   isCalibrated500: false,
   isCalibrated1000: false,
   isCalibrated2000: false,
   isCalibrated4000: false,
+  referenceDb500Values: [],
+  referenceDb1000Values: [],
+  referenceDb2000Values: [],
+  referenceDb4000Values: [],
 };
 
 const TestContext = createContext<TestContextType | undefined>(undefined);
@@ -130,15 +147,18 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setEnvironmentCheck({ ...environmentCheck, ...check });
   };
 
-  const updateCalibrationData = async (data: Partial<CalibrationData>) => {
-    const newCalibrationData = { ...calibrationData, ...data };
-    setCalibrationData(newCalibrationData);
-    
-    // Save to Supabase whenever calibration data changes
+  const saveCalibrationForFrequency = async (frequency: 500 | 1000 | 2000 | 4000, value: number) => {
     try {
-      await saveCalibrationData(newCalibrationData);
+      await saveCalibrationValue(frequency, value);
+      
+      // Reload calibration data after saving
+      const updatedData = await loadCalibrationData();
+      if (updatedData) {
+        setCalibrationData(updatedData);
+      }
     } catch (error) {
-      console.error('Failed to save calibration data:', error);
+      console.error(`Failed to save calibration for ${frequency}Hz:`, error);
+      throw error;
     }
   };
 
@@ -177,7 +197,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         environmentCheck,
         updateEnvironmentCheck,
         calibrationData,
-        updateCalibrationData,
+        saveCalibrationForFrequency,
         currentEar,
         setCurrentEar,
         currentFrequency,
