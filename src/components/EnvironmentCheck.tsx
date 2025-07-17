@@ -656,8 +656,8 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone500}
                   >
-                    <Volume className="h-4 w-4 mr-2" />
-                    Play 500Hz Tone
+                    <Volume className="h-4 w-4 mr-0.5" />
+                    Play
                   </Button>
                 ) : (
                   <Button 
@@ -665,7 +665,7 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone500}
                   >
-                    <VolumeX className="h-4 w-4 mr-2" />
+                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -675,8 +675,8 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration500}
                 >
-                  <CircleCheck className="h-4 w-4 mr-2" />
-                  Save Calibration
+                  <CircleCheck className="h-4 w-4 mr-0.5" />
+                  Save
                 </Button>
               </div>
             </div>
@@ -722,8 +722,8 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone}
                   >
-                    <Volume className="h-4 w-4 mr-2" />
-                    Play 1000Hz Tone
+                    <Volume className="h-4 w-4 mr-0.5" />
+                    Play
                   </Button>
                 ) : (
                   <Button 
@@ -731,7 +731,7 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone}
                   >
-                    <VolumeX className="h-4 w-4 mr-2" />
+                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -741,8 +741,8 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration}
                 >
-                  <CircleCheck className="h-4 w-4 mr-2" />
-                  Save Calibration
+                  <CircleCheck className="h-4 w-4 mr-0.5" />
+                  Save
                 </Button>
               </div>
             </div>
@@ -788,8 +788,8 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone2000}
                   >
-                    <Volume className="h-4 w-4 mr-2" />
-                    Play 2000Hz Tone
+                    <Volume className="h-4 w-4 mr-0.5" />
+                    Play
                   </Button>
                 ) : (
                   <Button 
@@ -797,7 +797,7 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone2000}
                   >
-                    <VolumeX className="h-4 w-4 mr-2" />
+                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -807,8 +807,8 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration2000}
                 >
-                  <CircleCheck className="h-4 w-4 mr-2" />
-                  Save Calibration
+                  <CircleCheck className="h-4 w-4 mr-0.5" />
+                  Save
                 </Button>
               </div>
             </div>
@@ -854,8 +854,8 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone4000}
                   >
-                    <Volume className="h-4 w-4 mr-2" />
-                    Play 4000Hz Tone
+                    <Volume className="h-4 w-4 mr-0.5" />
+                    Play
                   </Button>
                 ) : (
                   <Button 
@@ -863,7 +863,7 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone4000}
                   >
-                    <VolumeX className="h-4 w-4 mr-2" />
+                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -873,8 +873,8 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration4000}
                 >
-                  <CircleCheck className="h-4 w-4 mr-2" />
-                  Save Calibration
+                  <CircleCheck className="h-4 w-4 mr-0.5" />
+                  Save
                 </Button>
               </div>
             </div>
