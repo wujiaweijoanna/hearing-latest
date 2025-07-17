@@ -623,257 +623,275 @@ const EnvironmentCheck = () => {
               </p>
             </div>
             
-            {/* 500Hz Calibration */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-medical-blue">500Hz Calibration</h4>
-              <div className="flex items-center justify-center space-x-3">
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={decreaseDb500}
-                  disabled={calibrationDb500 <= 0}
-                >
-                  -
-                </Button>
-                
-                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
-                  {calibrationDb500} dB
-                </div>
-                
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={increaseDb500}
-                  disabled={calibrationDb500 >= 80}
-                >
-                  +
-                </Button>
-
-                {!isPlaying500 ? (
-                  <Button 
-                    className="bg-medical-blue hover:bg-medical-blue-dark"
-                    onClick={startContinuousTone500}
-                  >
-                    Play
-                  </Button>
-                ) : (
+            {/* Row 1: 500Hz and 1000Hz */}
+            <div className="grid grid-cols-2 gap-6">
+              {/* 500Hz Calibration */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-medical-blue">500Hz Calibration</h4>
+                <div className="flex items-center justify-center space-x-2">
                   <Button 
                     variant="outline"
-                    className="border-red-600 text-red-600 hover:bg-red-50"
-                    onClick={stopContinuousTone500}
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={decreaseDb500}
+                    disabled={calibrationDb500 <= 0}
                   >
-                    Stop Tone
+                    -
                   </Button>
-                )}
+                  
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                    {calibrationDb500}
+                  </div>
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={increaseDb500}
+                    disabled={calibrationDb500 >= 80}
+                  >
+                    +
+                  </Button>
+
+                  {!isPlaying500 ? (
+                    <Button 
+                      size="sm"
+                      className="bg-medical-blue hover:bg-medical-blue-dark"
+                      onClick={startContinuousTone500}
+                    >
+                      Play
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="border-red-600 text-red-600 hover:bg-red-50"
+                      onClick={stopContinuousTone500}
+                    >
+                      Stop
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-green-600 text-green-600 hover:bg-green-50"
+                    onClick={saveCalibration500}
+                  >
+                    Save
+                  </Button>
+                </div>
                 
-                <Button 
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-50"
-                  onClick={saveCalibration500}
-                >
-                  Save
-                </Button>
+                {calibrationData.isCalibrated500 && (
+                  <div className="bg-green-50 p-2 rounded-lg border border-green-200">
+                    <p className="text-xs text-green-800">
+                      ✓ Calibration saved! Reference: {calibrationData.referenceDb500} dB
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* 1000Hz Calibration */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-medical-blue">1000Hz Calibration</h4>
+                <div className="flex items-center justify-center space-x-2">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={decreaseDb}
+                    disabled={calibrationDb <= 0}
+                  >
+                    -
+                  </Button>
+                  
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                    {calibrationDb}
+                  </div>
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={increaseDb}
+                    disabled={calibrationDb >= 80}
+                  >
+                    +
+                  </Button>
+
+                  {!isPlaying ? (
+                    <Button 
+                      size="sm"
+                      className="bg-medical-blue hover:bg-medical-blue-dark"
+                      onClick={startContinuousTone}
+                    >
+                      Play
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="border-red-600 text-red-600 hover:bg-red-50"
+                      onClick={stopContinuousTone}
+                    >
+                      Stop
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-green-600 text-green-600 hover:bg-green-50"
+                    onClick={saveCalibration}
+                  >
+                    Save
+                  </Button>
+                </div>
+                
+                {calibrationData.isCalibrated1000 && (
+                  <div className="bg-green-50 p-2 rounded-lg border border-green-200">
+                    <p className="text-xs text-green-800">
+                      ✓ Calibration saved! Reference: {calibrationData.referenceDb1000} dB
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
-            {calibrationData.isCalibrated500 && (
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
-                  ✓ Calibration saved! Your 15 dB reference for 500Hz is set to {calibrationData.referenceDb500} dB
-                </p>
-              </div>
-            )}
-
-            {/* 1000Hz Calibration */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-medical-blue">1000Hz Calibration</h4>
-              <div className="flex items-center justify-center space-x-3">
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={decreaseDb}
-                  disabled={calibrationDb <= 0}
-                >
-                  -
-                </Button>
-                
-                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
-                  {calibrationDb} dB
-                </div>
-                
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={increaseDb}
-                  disabled={calibrationDb >= 80}
-                >
-                  +
-                </Button>
-
-                {!isPlaying ? (
-                  <Button 
-                    className="bg-medical-blue hover:bg-medical-blue-dark"
-                    onClick={startContinuousTone}
-                  >
-                    Play
-                  </Button>
-                ) : (
+            {/* Row 2: 2000Hz and 4000Hz */}
+            <div className="grid grid-cols-2 gap-6">
+              {/* 2000Hz Calibration */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-medical-blue">2000Hz Calibration</h4>
+                <div className="flex items-center justify-center space-x-2">
                   <Button 
                     variant="outline"
-                    className="border-red-600 text-red-600 hover:bg-red-50"
-                    onClick={stopContinuousTone}
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={decreaseDb2000}
+                    disabled={calibrationDb2000 <= 0}
                   >
-                    Stop Tone
+                    -
                   </Button>
-                )}
-                
-                <Button 
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-50"
-                  onClick={saveCalibration}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-
-            {calibrationData.isCalibrated1000 && (
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
-                  ✓ Calibration saved! Your 15 dB reference for 1000Hz is set to {calibrationData.referenceDb1000} dB
-                </p>
-              </div>
-            )}
-
-            {/* 2000Hz Calibration */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-medical-blue">2000Hz Calibration</h4>
-              <div className="flex items-center justify-center space-x-3">
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={decreaseDb2000}
-                  disabled={calibrationDb2000 <= 0}
-                >
-                  -
-                </Button>
-                
-                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
-                  {calibrationDb2000} dB
-                </div>
-                
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={increaseDb2000}
-                  disabled={calibrationDb2000 >= 80}
-                >
-                  +
-                </Button>
-
-                {!isPlaying2000 ? (
-                  <Button 
-                    className="bg-medical-blue hover:bg-medical-blue-dark"
-                    onClick={startContinuousTone2000}
-                  >
-                    Play
-                  </Button>
-                ) : (
+                  
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                    {calibrationDb2000}
+                  </div>
+                  
                   <Button 
                     variant="outline"
-                    className="border-red-600 text-red-600 hover:bg-red-50"
-                    onClick={stopContinuousTone2000}
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={increaseDb2000}
+                    disabled={calibrationDb2000 >= 80}
                   >
-                    Stop Tone
+                    +
                   </Button>
-                )}
-                
-                <Button 
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-50"
-                  onClick={saveCalibration2000}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
 
-            {calibrationData.isCalibrated2000 && (
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
-                  ✓ Calibration saved! Your 15 dB reference for 2000Hz is set to {calibrationData.referenceDb2000} dB
-                </p>
-              </div>
-            )}
-
-            {/* 4000Hz Calibration */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-medical-blue">4000Hz Calibration</h4>
-              <div className="flex items-center justify-center space-x-3">
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={decreaseDb4000}
-                  disabled={calibrationDb4000 <= 0}
-                >
-                  -
-                </Button>
-                
-                <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
-                  {calibrationDb4000} dB
-                </div>
-                
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  onClick={increaseDb4000}
-                  disabled={calibrationDb4000 >= 80}
-                >
-                  +
-                </Button>
-
-                {!isPlaying4000 ? (
-                  <Button 
-                    className="bg-medical-blue hover:bg-medical-blue-dark"
-                    onClick={startContinuousTone4000}
-                  >
-                    Play
-                  </Button>
-                ) : (
+                  {!isPlaying2000 ? (
+                    <Button 
+                      size="sm"
+                      className="bg-medical-blue hover:bg-medical-blue-dark"
+                      onClick={startContinuousTone2000}
+                    >
+                      Play
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="border-red-600 text-red-600 hover:bg-red-50"
+                      onClick={stopContinuousTone2000}
+                    >
+                      Stop
+                    </Button>
+                  )}
+                  
                   <Button 
                     variant="outline"
-                    className="border-red-600 text-red-600 hover:bg-red-50"
-                    onClick={stopContinuousTone4000}
+                    size="sm"
+                    className="border-green-600 text-green-600 hover:bg-green-50"
+                    onClick={saveCalibration2000}
                   >
-                    Stop Tone
+                    Save
                   </Button>
-                )}
+                </div>
                 
-                <Button 
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-50"
-                  onClick={saveCalibration4000}
-                >
-                  Save
-                </Button>
+                {calibrationData.isCalibrated2000 && (
+                  <div className="bg-green-50 p-2 rounded-lg border border-green-200">
+                    <p className="text-xs text-green-800">
+                      ✓ Calibration saved! Reference: {calibrationData.referenceDb2000} dB
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* 4000Hz Calibration */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-medical-blue">4000Hz Calibration</h4>
+                <div className="flex items-center justify-center space-x-2">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={decreaseDb4000}
+                    disabled={calibrationDb4000 <= 0}
+                  >
+                    -
+                  </Button>
+                  
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                    {calibrationDb4000}
+                  </div>
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    onClick={increaseDb4000}
+                    disabled={calibrationDb4000 >= 80}
+                  >
+                    +
+                  </Button>
+
+                  {!isPlaying4000 ? (
+                    <Button 
+                      size="sm"
+                      className="bg-medical-blue hover:bg-medical-blue-dark"
+                      onClick={startContinuousTone4000}
+                    >
+                      Play
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="border-red-600 text-red-600 hover:bg-red-50"
+                      onClick={stopContinuousTone4000}
+                    >
+                      Stop
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="border-green-600 text-green-600 hover:bg-green-50"
+                    onClick={saveCalibration4000}
+                  >
+                    Save
+                  </Button>
+                </div>
+                
+                {calibrationData.isCalibrated4000 && (
+                  <div className="bg-green-50 p-2 rounded-lg border border-green-200">
+                    <p className="text-xs text-green-800">
+                      ✓ Calibration saved! Reference: {calibrationData.referenceDb4000} dB
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
-
-            {calibrationData.isCalibrated4000 && (
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
-                  ✓ Calibration saved! Your 15 dB reference for 4000Hz is set to {calibrationData.referenceDb4000} dB
-                </p>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
