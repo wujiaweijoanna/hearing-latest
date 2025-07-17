@@ -546,7 +546,7 @@ const EnvironmentCheck = () => {
   };
 
   const increaseDb500 = () => {
-    const newDb = Math.min(calibrationDb500 + 1, 80);
+    const newDb = Math.min(calibrationDb500 + 2, 80);
     setCalibrationDb500(newDb);
     if (isPlaying500) {
       updateToneVolume500(newDb);
@@ -554,7 +554,7 @@ const EnvironmentCheck = () => {
   };
 
   const decreaseDb500 = () => {
-    const newDb = Math.max(calibrationDb500 - 1, 0);
+    const newDb = Math.max(calibrationDb500 - 2, 0);
     setCalibrationDb500(newDb);
     if (isPlaying500) {
       updateToneVolume500(newDb);
@@ -562,7 +562,7 @@ const EnvironmentCheck = () => {
   };
 
   const increaseDb = () => {
-    const newDb = Math.min(calibrationDb + 1, 80);
+    const newDb = Math.min(calibrationDb + 2, 80);
     setCalibrationDb(newDb);
     if (isPlaying) {
       updateToneVolume(newDb);
@@ -570,7 +570,7 @@ const EnvironmentCheck = () => {
   };
 
   const decreaseDb = () => {
-    const newDb = Math.max(calibrationDb - 1, 0);
+    const newDb = Math.max(calibrationDb - 2, 0);
     setCalibrationDb(newDb);
     if (isPlaying) {
       updateToneVolume(newDb);
@@ -578,7 +578,7 @@ const EnvironmentCheck = () => {
   };
 
   const increaseDb2000 = () => {
-    const newDb = Math.min(calibrationDb2000 + 1, 80);
+    const newDb = Math.min(calibrationDb2000 + 2, 80);
     setCalibrationDb2000(newDb);
     if (isPlaying2000) {
       updateToneVolume2000(newDb);
@@ -586,7 +586,7 @@ const EnvironmentCheck = () => {
   };
 
   const decreaseDb2000 = () => {
-    const newDb = Math.max(calibrationDb2000 - 1, 0);
+    const newDb = Math.max(calibrationDb2000 - 2, 0);
     setCalibrationDb2000(newDb);
     if (isPlaying2000) {
       updateToneVolume2000(newDb);
@@ -594,7 +594,7 @@ const EnvironmentCheck = () => {
   };
 
   const increaseDb4000 = () => {
-    const newDb = Math.min(calibrationDb4000 + 1, 80);
+    const newDb = Math.min(calibrationDb4000 + 2, 80);
     setCalibrationDb4000(newDb);
     if (isPlaying4000) {
       updateToneVolume4000(newDb);
@@ -602,7 +602,7 @@ const EnvironmentCheck = () => {
   };
 
   const decreaseDb4000 = () => {
-    const newDb = Math.max(calibrationDb4000 - 1, 0);
+    const newDb = Math.max(calibrationDb4000 - 2, 0);
     setCalibrationDb4000(newDb);
     if (isPlaying4000) {
       updateToneVolume4000(newDb);
