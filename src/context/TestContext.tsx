@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { loadCalibrationData, saveCalibrationData } from '@/lib/calibration';
 
 type Ear = 'right' | 'left';
 type TestPhase = 'environment' | 'screening' | 'threshold' | 'results';
@@ -35,7 +36,7 @@ interface TestContextType {
   environmentCheck: EnvironmentCheck;
   updateEnvironmentCheck: (check: Partial<EnvironmentCheck>) => void;
   calibrationData: CalibrationData;
-  updateCalibrationData: (data: Partial<CalibrationData>) => void;
+  updateCalibrationData: (data: Partial<CalibrationData>) => Promise<void>;
   currentEar: Ear;
   setCurrentEar: React.Dispatch<React.SetStateAction<Ear>>;
   currentFrequency: Frequency;
@@ -56,6 +57,7 @@ interface TestContextType {
   setCurrentAttempt: React.Dispatch<React.SetStateAction<number>>;
   remarks: string;
   setRemarks: React.Dispatch<React.SetStateAction<string>>;
+  isLoadingCalibration: boolean;
 }
 
 interface PatientInfo {
@@ -104,13 +106,40 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [currentAttempt, setCurrentAttempt] = useState<number>(0);
   const [remarks, setRemarks] = useState<string>('');
+  const [isLoadingCalibration, setIsLoadingCalibration] = useState<boolean>(true);
+
+  // Load calibration data on mount
+  useEffect(() => {
+    const loadSavedCalibration = async () => {
+      try {
+        const savedData = await loadCalibrationData();
+        if (savedData) {
+          setCalibrationData(savedData);
+        }
+      } catch (error) {
+        console.error('Failed to load calibration data:', error);
+      } finally {
+        setIsLoadingCalibration(false);
+      }
+    };
+
+    loadSavedCalibration();
+  }, []);
 
   const updateEnvironmentCheck = (check: Partial<EnvironmentCheck>) => {
     setEnvironmentCheck({ ...environmentCheck, ...check });
   };
 
-  const updateCalibrationData = (data: Partial<CalibrationData>) => {
-    setCalibrationData({ ...calibrationData, ...data });
+  const updateCalibrationData = async (data: Partial<CalibrationData>) => {
+    const newCalibrationData = { ...calibrationData, ...data };
+    setCalibrationData(newCalibrationData);
+    
+    // Save to Supabase whenever calibration data changes
+    try {
+      await saveCalibrationData(newCalibrationData);
+    } catch (error) {
+      console.error('Failed to save calibration data:', error);
+    }
   };
 
   const addThresholdResult = (result: ThresholdResult) => {
@@ -168,7 +197,8 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         currentAttempt,
         setCurrentAttempt,
         remarks,
-        setRemarks
+        setRemarks,
+        isLoadingCalibration
       }}
     >
       {children}

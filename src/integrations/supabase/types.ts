@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      calibrations: {
+        Row: {
+          created_at: string
+          id: string
+          reference_db_500: number | null
+          reference_db_1000: number | null
+          reference_db_2000: number | null
+          reference_db_4000: number | null
+          is_calibrated_500: boolean
+          is_calibrated_1000: boolean
+          is_calibrated_2000: boolean
+          is_calibrated_4000: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reference_db_500?: number | null
+          reference_db_1000?: number | null
+          reference_db_2000?: number | null
+          reference_db_4000?: number | null
+          is_calibrated_500?: boolean
+          is_calibrated_1000?: boolean
+          is_calibrated_2000?: boolean
+          is_calibrated_4000?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reference_db_500?: number | null
+          reference_db_1000?: number | null
+          reference_db_2000?: number | null
+          reference_db_4000?: number | null
+          is_calibrated_500?: boolean
+          is_calibrated_1000?: boolean
+          is_calibrated_2000?: boolean
+          is_calibrated_4000?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       patients: {
         Row: {
           age: string | null

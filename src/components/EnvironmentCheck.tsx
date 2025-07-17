@@ -16,7 +16,8 @@ const EnvironmentCheck = () => {
     patientInfo, 
     updatePatientInfo,
     calibrationData,
-    updateCalibrationData 
+    updateCalibrationData,
+    isLoadingCalibration
   } = useTest();
   const [noiseLevelInput, setNoiseLevelInput] = useState('');
   const [calibrationDb, setCalibrationDb] = useState(30);
@@ -28,6 +29,7 @@ const EnvironmentCheck = () => {
   const [isPlaying500, setIsPlaying500] = useState(false);
   const [isPlaying2000, setIsPlaying2000] = useState(false);
   const [isPlaying4000, setIsPlaying4000] = useState(false);
+  const [isSavingCalibration, setIsSavingCalibration] = useState(false);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const oscillator500Ref = useRef<OscillatorNode | null>(null);
@@ -63,6 +65,22 @@ const EnvironmentCheck = () => {
       }
     };
   }, []);
+
+  // Initialize calibration values from saved data
+  useEffect(() => {
+    if (!isLoadingCalibration && calibrationData.referenceDb500 !== null) {
+      setCalibrationDb500(calibrationData.referenceDb500);
+    }
+    if (!isLoadingCalibration && calibrationData.referenceDb1000 !== null) {
+      setCalibrationDb(calibrationData.referenceDb1000);
+    }
+    if (!isLoadingCalibration && calibrationData.referenceDb2000 !== null) {
+      setCalibrationDb2000(calibrationData.referenceDb2000);
+    }
+    if (!isLoadingCalibration && calibrationData.referenceDb4000 !== null) {
+      setCalibrationDb4000(calibrationData.referenceDb4000);
+    }
+  }, [isLoadingCalibration, calibrationData]);
 
   const startContinuousTone = useCallback(async () => {
     if (!audioContext || isPlaying) return;
@@ -513,36 +531,64 @@ const EnvironmentCheck = () => {
     toast.success('Environment check passed. Starting screening test...');
   };
 
-  const saveCalibration500 = () => {
-    updateCalibrationData({ 
-      referenceDb500: calibrationDb500,
-      isCalibrated500: true
-    });
-    toast.success(`Calibration saved! Your 15 dB reference for 500Hz is set to ${calibrationDb500} dB`);
+  const saveCalibration500 = async () => {
+    setIsSavingCalibration(true);
+    try {
+      await updateCalibrationData({ 
+        referenceDb500: calibrationDb500,
+        isCalibrated500: true
+      });
+      toast.success(`Calibration saved! Your 15 dB reference for 500Hz is set to ${calibrationDb500} dB`);
+    } catch (error) {
+      toast.error('Failed to save calibration data');
+    } finally {
+      setIsSavingCalibration(false);
+    }
   };
 
-  const saveCalibration = () => {
-    updateCalibrationData({ 
-      referenceDb1000: calibrationDb,
-      isCalibrated1000: true
-    });
-    toast.success(`Calibration saved! Your 15 dB reference for 1000Hz is set to ${calibrationDb} dB`);
+  const saveCalibration = async () => {
+    setIsSavingCalibration(true);
+    try {
+      await updateCalibrationData({ 
+        referenceDb1000: calibrationDb,
+        isCalibrated1000: true
+      });
+      toast.success(`Calibration saved! Your 15 dB reference for 1000Hz is set to ${calibrationDb} dB`);
+    } catch (error) {
+      toast.error('Failed to save calibration data');
+    } finally {
+      setIsSavingCalibration(false);
+    }
   };
 
-  const saveCalibration2000 = () => {
-    updateCalibrationData({ 
-      referenceDb2000: calibrationDb2000,
-      isCalibrated2000: true
-    });
-    toast.success(`Calibration saved! Your 15 dB reference for 2000Hz is set to ${calibrationDb2000} dB`);
+  const saveCalibration2000 = async () => {
+    setIsSavingCalibration(true);
+    try {
+      await updateCalibrationData({ 
+        referenceDb2000: calibrationDb2000,
+        isCalibrated2000: true
+      });
+      toast.success(`Calibration saved! Your 15 dB reference for 2000Hz is set to ${calibrationDb2000} dB`);
+    } catch (error) {
+      toast.error('Failed to save calibration data');
+    } finally {
+      setIsSavingCalibration(false);
+    }
   };
 
-  const saveCalibration4000 = () => {
-    updateCalibrationData({ 
-      referenceDb4000: calibrationDb4000,
-      isCalibrated4000: true
-    });
-    toast.success(`Calibration saved! Your 15 dB reference for 4000Hz is set to ${calibrationDb4000} dB`);
+  const saveCalibration4000 = async () => {
+    setIsSavingCalibration(true);
+    try {
+      await updateCalibrationData({ 
+        referenceDb4000: calibrationDb4000,
+        isCalibrated4000: true
+      });
+      toast.success(`Calibration saved! Your 15 dB reference for 4000Hz is set to ${calibrationDb4000} dB`);
+    } catch (error) {
+      toast.error('Failed to save calibration data');
+    } finally {
+      setIsSavingCalibration(false);
+    }
   };
 
   const increaseDb500 = () => {
@@ -608,6 +654,21 @@ const EnvironmentCheck = () => {
       updateToneVolume4000(newDb);
     }
   };
+
+  if (isLoadingCalibration) {
+    return (
+      <div className="container mx-auto max-w-3xl py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-center space-x-2 py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-medical-blue"></div>
+              <span>Loading calibration data...</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-3xl py-8">
@@ -725,8 +786,9 @@ const EnvironmentCheck = () => {
                     size="sm"
                     className="border-green-600 text-green-600 hover:bg-green-50"
                     onClick={saveCalibration500}
+                    disabled={isSavingCalibration}
                   >
-                    Save
+                    {isSavingCalibration ? 'Saving...' : 'Save'}
                   </Button>
                 </div>
                 
@@ -791,8 +853,9 @@ const EnvironmentCheck = () => {
                     size="sm"
                     className="border-green-600 text-green-600 hover:bg-green-50"
                     onClick={saveCalibration}
+                    disabled={isSavingCalibration}
                   >
-                    Save
+                    {isSavingCalibration ? 'Saving...' : 'Save'}
                   </Button>
                 </div>
                 
@@ -860,8 +923,9 @@ const EnvironmentCheck = () => {
                     size="sm"
                     className="border-green-600 text-green-600 hover:bg-green-50"
                     onClick={saveCalibration2000}
+                    disabled={isSavingCalibration}
                   >
-                    Save
+                    {isSavingCalibration ? 'Saving...' : 'Save'}
                   </Button>
                 </div>
                 
@@ -926,8 +990,9 @@ const EnvironmentCheck = () => {
                     size="sm"
                     className="border-green-600 text-green-600 hover:bg-green-50"
                     onClick={saveCalibration4000}
+                    disabled={isSavingCalibration}
                   >
-                    Save
+                    {isSavingCalibration ? 'Saving...' : 'Save'}
                   </Button>
                 </div>
                 
