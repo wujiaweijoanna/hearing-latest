@@ -634,7 +634,7 @@ const EnvironmentCheck = () => {
                   onClick={decreaseDb500}
                   disabled={calibrationDb500 <= 0}
                 >
-                  <Minus className="h-4 w-4" />
+                  -
                 </Button>
                 
                 <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
@@ -648,7 +648,7 @@ const EnvironmentCheck = () => {
                   onClick={increaseDb500}
                   disabled={calibrationDb500 >= 80}
                 >
-                  <Plus className="h-4 w-4" />
+                  +
                 </Button>
 
                 {!isPlaying500 ? (
@@ -656,7 +656,6 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone500}
                   >
-                    <Volume className="h-4 w-4 mr-0.5" />
                     Play
                   </Button>
                 ) : (
@@ -665,7 +664,6 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone500}
                   >
-                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -675,7 +673,6 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration500}
                 >
-                  <CircleCheck className="h-4 w-4 mr-0.5" />
                   Save
                 </Button>
               </div>
@@ -700,7 +697,7 @@ const EnvironmentCheck = () => {
                   onClick={decreaseDb}
                   disabled={calibrationDb <= 0}
                 >
-                  <Minus className="h-4 w-4" />
+                  -
                 </Button>
                 
                 <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
@@ -714,7 +711,7 @@ const EnvironmentCheck = () => {
                   onClick={increaseDb}
                   disabled={calibrationDb >= 80}
                 >
-                  <Plus className="h-4 w-4" />
+                  +
                 </Button>
 
                 {!isPlaying ? (
@@ -722,7 +719,6 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone}
                   >
-                    <Volume className="h-4 w-4 mr-0.5" />
                     Play
                   </Button>
                 ) : (
@@ -731,7 +727,6 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone}
                   >
-                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -741,7 +736,6 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration}
                 >
-                  <CircleCheck className="h-4 w-4 mr-0.5" />
                   Save
                 </Button>
               </div>
@@ -766,7 +760,7 @@ const EnvironmentCheck = () => {
                   onClick={decreaseDb2000}
                   disabled={calibrationDb2000 <= 0}
                 >
-                  <Minus className="h-4 w-4" />
+                  -
                 </Button>
                 
                 <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
@@ -780,7 +774,7 @@ const EnvironmentCheck = () => {
                   onClick={increaseDb2000}
                   disabled={calibrationDb2000 >= 80}
                 >
-                  <Plus className="h-4 w-4" />
+                  +
                 </Button>
 
                 {!isPlaying2000 ? (
@@ -788,7 +782,6 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone2000}
                   >
-                    <Volume className="h-4 w-4 mr-0.5" />
                     Play
                   </Button>
                 ) : (
@@ -797,7 +790,6 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone2000}
                   >
-                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -807,7 +799,6 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration2000}
                 >
-                  <CircleCheck className="h-4 w-4 mr-0.5" />
                   Save
                 </Button>
               </div>
@@ -832,7 +823,7 @@ const EnvironmentCheck = () => {
                   onClick={decreaseDb4000}
                   disabled={calibrationDb4000 <= 0}
                 >
-                  <Minus className="h-4 w-4" />
+                  -
                 </Button>
                 
                 <div className="px-3 py-2 bg-gray-100 rounded-md min-w-[70px] text-center font-medium">
@@ -846,7 +837,7 @@ const EnvironmentCheck = () => {
                   onClick={increaseDb4000}
                   disabled={calibrationDb4000 >= 80}
                 >
-                  <Plus className="h-4 w-4" />
+                  +
                 </Button>
 
                 {!isPlaying4000 ? (
@@ -854,7 +845,6 @@ const EnvironmentCheck = () => {
                     className="bg-medical-blue hover:bg-medical-blue-dark"
                     onClick={startContinuousTone4000}
                   >
-                    <Volume className="h-4 w-4 mr-0.5" />
                     Play
                   </Button>
                 ) : (
@@ -863,7 +853,6 @@ const EnvironmentCheck = () => {
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={stopContinuousTone4000}
                   >
-                    <VolumeX className="h-4 w-4 mr-0.5" />
                     Stop Tone
                   </Button>
                 )}
@@ -873,7 +862,6 @@ const EnvironmentCheck = () => {
                   className="border-green-600 text-green-600 hover:bg-green-50"
                   onClick={saveCalibration4000}
                 >
-                  <CircleCheck className="h-4 w-4 mr-0.5" />
                   Save
                 </Button>
               </div>
