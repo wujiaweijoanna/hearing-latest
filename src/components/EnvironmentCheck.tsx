@@ -69,6 +69,7 @@ const EnvironmentCheck = () => {
     if (audioContext.state === 'suspended') await audioContext.resume();
 
     setIsPlaying(true);
+    let playCount = 0;
 
     const playToneInterval = () => {
       if (!isMounted.current) return;
@@ -105,6 +106,17 @@ const EnvironmentCheck = () => {
           // Ignore if already disconnected
         }
       };
+
+      playCount++;
+      
+      // Stop after 2 cycles (on-off-on-off)
+      if (playCount >= 2) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        setIsPlaying(false);
+      }
     };
 
     // Start the first tone immediately
@@ -154,6 +166,7 @@ const EnvironmentCheck = () => {
     if (audioContext.state === 'suspended') await audioContext.resume();
 
     setIsPlaying500(true);
+    let playCount = 0;
 
     const playToneInterval = () => {
       if (!isMounted.current) return;
@@ -190,6 +203,17 @@ const EnvironmentCheck = () => {
           // Ignore if already disconnected
         }
       };
+
+      playCount++;
+      
+      // Stop after 2 cycles (on-off-on-off)
+      if (playCount >= 2) {
+        if (interval500Ref.current) {
+          clearInterval(interval500Ref.current);
+          interval500Ref.current = null;
+        }
+        setIsPlaying500(false);
+      }
     };
 
     // Start the first tone immediately
@@ -239,6 +263,7 @@ const EnvironmentCheck = () => {
     if (audioContext.state === 'suspended') await audioContext.resume();
 
     setIsPlaying2000(true);
+    let playCount = 0;
 
     const playToneInterval = () => {
       if (!isMounted.current) return;
@@ -275,6 +300,17 @@ const EnvironmentCheck = () => {
           // Ignore if already disconnected
         }
       };
+
+      playCount++;
+      
+      // Stop after 2 cycles (on-off-on-off)
+      if (playCount >= 2) {
+        if (interval2000Ref.current) {
+          clearInterval(interval2000Ref.current);
+          interval2000Ref.current = null;
+        }
+        setIsPlaying2000(false);
+      }
     };
 
     // Start the first tone immediately
@@ -324,6 +360,7 @@ const EnvironmentCheck = () => {
     if (audioContext.state === 'suspended') await audioContext.resume();
 
     setIsPlaying4000(true);
+    let playCount = 0;
 
     const playToneInterval = () => {
       if (!isMounted.current) return;
@@ -360,6 +397,17 @@ const EnvironmentCheck = () => {
           // Ignore if already disconnected
         }
       };
+
+      playCount++;
+      
+      // Stop after 2 cycles (on-off-on-off)
+      if (playCount >= 2) {
+        if (interval4000Ref.current) {
+          clearInterval(interval4000Ref.current);
+          interval4000Ref.current = null;
+        }
+        setIsPlaying4000(false);
+      }
     };
 
     // Start the first tone immediately
