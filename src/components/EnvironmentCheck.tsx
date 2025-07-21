@@ -787,11 +787,12 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated500 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibrated! Applied: {calibrationData.appliedDb500} dB
+                      ✓ Calibrated!
+                      {/* Applied: {calibrationData.appliedDb500} dB */}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    {/* <p className="text-xs text-gray-600">
                       Values: [{calibrationData.referenceDb500Values.join(', ')}]
-                    </p>
+                    </p> */}
                   </div>
                 )}
               </div>
@@ -857,11 +858,12 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated1000 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibrated! Applied: {calibrationData.appliedDb1000} dB
+                      ✓ Calibrated!
+                      {/* Applied: {calibrationData.appliedDb1000} dB */}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    {/* <p className="text-xs text-gray-600">
                       Values: [{calibrationData.referenceDb1000Values.join(', ')}]
-                    </p>
+                    </p> */}
                   </div>
                 )}
               </div>
@@ -930,11 +932,12 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated2000 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibrated! Applied: {calibrationData.appliedDb2000} dB
+                      ✓ Calibrated!
+                      {/* Applied: {calibrationData.appliedDb2000} dB */}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    {/* <p className="text-xs text-gray-600">
                       Values: [{calibrationData.referenceDb2000Values.join(', ')}]
-                    </p>
+                    </p> */}
                   </div>
                 )}
               </div>
@@ -1000,11 +1003,12 @@ const EnvironmentCheck = () => {
                 {calibrationData.isCalibrated4000 && (
                   <div className="bg-green-50 p-2 rounded-lg border border-green-200">
                     <p className="text-xs text-green-800">
-                      ✓ Calibrated! Applied: {calibrationData.appliedDb4000} dB
+                      ✓ Calibrated!
+                      {/* Applied: {calibrationData.appliedDb4000} dB */}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    {/* <p className="text-xs text-gray-600">
                       Values: [{calibrationData.referenceDb4000Values.join(', ')}]
-                    </p>
+                    </p> */}
                   </div>
                 )}
               </div>
