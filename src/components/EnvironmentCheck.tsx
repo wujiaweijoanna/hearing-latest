@@ -740,9 +740,9 @@ const EnvironmentCheck = () => {
                     -
                   </Button>
                   
-                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb500}
-                  </div>
+                  </div> */}
                   
                   <Button 
                     variant="outline"
@@ -810,9 +810,9 @@ const EnvironmentCheck = () => {
                     -
                   </Button>
                   
-                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb}
-                  </div>
+                  </div> */}
                   
                   <Button 
                     variant="outline"
@@ -883,9 +883,9 @@ const EnvironmentCheck = () => {
                     -
                   </Button>
                   
-                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb2000}
-                  </div>
+                  </div> */}
                   
                   <Button 
                     variant="outline"
@@ -953,9 +953,9 @@ const EnvironmentCheck = () => {
                     -
                   </Button>
                   
-                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb4000}
-                  </div>
+                  </div> */}
                   
                   <Button 
                     variant="outline"
