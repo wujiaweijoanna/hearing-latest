@@ -733,7 +733,7 @@ const EnvironmentCheck = () => {
               {/* 500Hz Calibration */}
               <div className="space-y-3">
                 <h4 className="font-medium text-medical-blue">500Hz Calibration</h4>
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline"
                     size="sm"
@@ -804,7 +804,7 @@ const EnvironmentCheck = () => {
               {/* 1000Hz Calibration */}
               <div className="space-y-3">
                 <h4 className="font-medium text-medical-blue">1000Hz Calibration</h4>
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline"
                     size="sm"
@@ -878,7 +878,7 @@ const EnvironmentCheck = () => {
               {/* 2000Hz Calibration */}
               <div className="space-y-3">
                 <h4 className="font-medium text-medical-blue">2000Hz Calibration</h4>
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline"
                     size="sm"
@@ -949,7 +949,7 @@ const EnvironmentCheck = () => {
               {/* 4000Hz Calibration */}
               <div className="space-y-3">
                 <h4 className="font-medium text-medical-blue">4000Hz Calibration</h4>
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline"
                     size="sm"
