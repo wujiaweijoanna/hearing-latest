@@ -538,7 +538,8 @@ const EnvironmentCheck = () => {
     setIsSavingCalibration(true);
     try {
       await saveCalibrationForFrequency(500, calibrationDb500);
-      toast.success(`Calibration saved! New value: ${calibrationDb500} dB. Applied: ${calibrationData.appliedDb500} dB`);
+      toast.success('Calibration saved!');
+      // toast.success(`Calibration saved! New value: ${calibrationDb500} dB. Applied: ${calibrationData.appliedDb500} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -550,7 +551,8 @@ const EnvironmentCheck = () => {
     setIsSavingCalibration(true);
     try {
       await saveCalibrationForFrequency(1000, calibrationDb);
-      toast.success(`Calibration saved! New value: ${calibrationDb} dB. Applied: ${calibrationData.appliedDb1000} dB`);
+      toast.success('Calibration saved!');
+      // toast.success(`Calibration saved! New value: ${calibrationDb} dB. Applied: ${calibrationData.appliedDb1000} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -562,7 +564,8 @@ const EnvironmentCheck = () => {
     setIsSavingCalibration(true);
     try {
       await saveCalibrationForFrequency(2000, calibrationDb2000);
-      toast.success(`Calibration saved! New value: ${calibrationDb2000} dB. Applied: ${calibrationData.appliedDb2000} dB`);
+      toast.success('Calibration saved!');
+      // toast.success(`Calibration saved! New value: ${calibrationDb2000} dB. Applied: ${calibrationData.appliedDb2000} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
@@ -574,7 +577,8 @@ const EnvironmentCheck = () => {
     setIsSavingCalibration(true);
     try {
       await saveCalibrationForFrequency(4000, calibrationDb4000);
-      toast.success(`Calibration saved! New value: ${calibrationDb4000} dB. Applied: ${calibrationData.appliedDb4000} dB`);
+      toast.success('Calibration saved!');
+      // toast.success(`Calibration saved! New value: ${calibrationDb4000} dB. Applied: ${calibrationData.appliedDb4000} dB`);
     } catch (error) {
       toast.error('Failed to save calibration data');
     } finally {
