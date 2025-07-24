@@ -36,8 +36,6 @@ const ScreeningTest = () => {
       context.close();
     };
   }, []);
-
-  // Initialize Web Speech API voices
   useEffect(() => {
     const loadVoices = () => {
       window.speechSynthesis.getVoices();
@@ -64,23 +62,15 @@ const ScreeningTest = () => {
     // Apply calibration offset for 500Hz, 1000Hz, 2000Hz, and 4000Hz tones
     let adjustedDb = dB;
     if (frequency === 1000 && calibrationData.isCalibrated1000 && calibrationData.appliedDb1000 !== null) {
-      // The user's calibration reference becomes their personal 15dB threshold
-      // So we need to adjust all 1000Hz tones relative to this reference
       const calibrationOffset = calibrationData.appliedDb1000 - 15;
       adjustedDb = dB + calibrationOffset;
     } else if (frequency === 500 && calibrationData.isCalibrated500 && calibrationData.appliedDb500 !== null) {
-      // The user's calibration reference becomes their personal 15dB threshold
-      // So we need to adjust all 500Hz tones relative to this reference
       const calibrationOffset = calibrationData.appliedDb500 - 15;
       adjustedDb = dB + calibrationOffset;
     } else if (frequency === 2000 && calibrationData.isCalibrated2000 && calibrationData.appliedDb2000 !== null) {
-      // The user's calibration reference becomes their personal 15dB threshold
-      // So we need to adjust all 2000Hz tones relative to this reference
       const calibrationOffset = calibrationData.appliedDb2000 - 15;
       adjustedDb = dB + calibrationOffset;
     } else if (frequency === 4000 && calibrationData.isCalibrated4000 && calibrationData.appliedDb4000 !== null) {
-      // The user's calibration reference becomes their personal 15dB threshold
-      // So we need to adjust all 4000Hz tones relative to this reference
       const calibrationOffset = calibrationData.appliedDb4000 - 15;
       adjustedDb = dB + calibrationOffset;
     }
@@ -224,19 +214,18 @@ const ScreeningTest = () => {
     };
   
     if (heard) {
-      if (phase === 'descending' && currentDb > 30) {
+      if (phase === 'descending' && currentDb > 20) {
         handleNextTone(currentDb - 10);
       } else {
         addThresholdResult({
           ear: currentEar,
           frequency: currentFrequency,
           threshold: currentDb,
-          passed: currentDb <= 30,
+          passed: currentDb <= 30, // Pass if 30dB or better (including 20dB)
         });
         setTimeout(moveToNextFrequency, 3000);
       }
     } else {
-      // If can't hear at 50 dB — whether starting at 50 (descending) OR ascending phase
       if (currentDb === 50) {
         addThresholdResult({
           ear: currentEar,
@@ -245,8 +234,15 @@ const ScreeningTest = () => {
           passed: false,
         });
         setTimeout(moveToNextFrequency, 3000);
+      } else if (currentDb === 20) {
+        addThresholdResult({
+          ear: currentEar,
+          frequency: currentFrequency,
+          threshold: 30,
+          passed: true,
+        });
+        setTimeout(moveToNextFrequency, 3000);
       } else {
-        // Otherwise, go up by 10 and switch to ascending phase
         setPhase('ascending');
         handleNextTone(currentDb + 10);
       }
