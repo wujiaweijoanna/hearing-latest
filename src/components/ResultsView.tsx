@@ -192,7 +192,7 @@ const ResultsView = () => {
                 }
               </CardDescription>
             </div>
-            <div className={`text-xl font-bold px-4 py-2 rounded-md ${
+            <div className={`text-xl font-bold pt-2 pb-6 px-4 rounded-md flex items-start ${
               hasFailedFrequency ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
             }`}>
               {hasFailedFrequency ? 'REFER' : 'PASS'}
