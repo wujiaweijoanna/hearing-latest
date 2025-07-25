@@ -180,7 +180,8 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const resetTest = () => {
     setCurrentPhase('environment');
     setEnvironmentCheck(initialEnvironmentCheck);
-    setCalibrationData(initialCalibrationData);
+    // Don't reset calibration data - preserve existing calibrations
+    // setCalibrationData(initialCalibrationData);
     setCurrentEar('right');
     setCurrentFrequency(500);
     setCurrentDb(50);
