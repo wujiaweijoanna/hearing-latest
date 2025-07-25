@@ -116,7 +116,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [calibrationData, setCalibrationData] = useState<CalibrationData>(initialCalibrationData);
   const [currentEar, setCurrentEar] = useState<Ear>('right');
   const [currentFrequency, setCurrentFrequency] = useState<Frequency>(500);
-  const [currentDb, setCurrentDb] = useState<number>(20);
+  const [currentDb, setCurrentDb] = useState<number>(50);
   const [responseStatus, setResponseStatus] = useState<ResponseStatus>('waiting');
   const [thresholdResults, setThresholdResults] = useState<ThresholdResult[]>([]);
   const [patientInfo, setPatientInfo] = useState<PatientInfo>(initialPatientInfo);
@@ -180,7 +180,7 @@ export const TestProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCalibrationData(initialCalibrationData);
     setCurrentEar('right');
     setCurrentFrequency(500);
-    setCurrentDb(20);
+    setCurrentDb(50);
     setResponseStatus('waiting');
     setThresholdResults([]);
     setPatientInfo(initialPatientInfo);
