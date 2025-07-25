@@ -27,6 +27,7 @@ export type Database = {
           is_calibrated_4000: boolean
           updated_at: string
           user_id: string
+          last_calibration_date: string | null
         }
         Insert: {
           created_at?: string
@@ -45,6 +46,7 @@ export type Database = {
           is_calibrated_4000?: boolean
           updated_at?: string
           user_id: string
+          last_calibration_date?: string | null
         }
         Update: {
           created_at?: string
@@ -63,6 +65,7 @@ export type Database = {
           is_calibrated_4000?: boolean
           updated_at?: string
           user_id?: string
+          last_calibration_date?: string | null
         }
         Relationships: []
       }

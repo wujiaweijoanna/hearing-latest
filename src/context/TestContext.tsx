@@ -30,6 +30,8 @@ interface CalibrationData {
   referenceDb1000Values: number[];
   referenceDb2000Values: number[];
   referenceDb4000Values: number[];
+  // Last calibration date
+  lastCalibrationDate: string | null;
 }
 
 interface ThresholdResult {
@@ -106,6 +108,7 @@ const initialCalibrationData: CalibrationData = {
   referenceDb1000Values: [],
   referenceDb2000Values: [],
   referenceDb4000Values: [],
+  lastCalibrationDate: null,
 };
 
 const TestContext = createContext<TestContextType | undefined>(undefined);

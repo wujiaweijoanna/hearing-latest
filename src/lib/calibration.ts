@@ -19,6 +19,8 @@ interface CalibrationData {
   referenceDb1000Values: number[];
   referenceDb2000Values: number[];
   referenceDb4000Values: number[];
+  // Last calibration date
+  lastCalibrationDate: string | null;
 }
 
 // Helper function to add a new value to an array and keep only the latest 3
@@ -81,6 +83,8 @@ export const saveCalibrationValue = async (frequency: 500 | 1000 | 2000 | 4000, 
     const appliedDb2000 = getMinimumValue(values2000);
     const appliedDb4000 = getMinimumValue(values4000);
 
+    const currentDate = new Date().toISOString();
+
     const calibrationRecord = {
       reference_db_500_values: values500,
       reference_db_1000_values: values1000,
@@ -95,7 +99,8 @@ export const saveCalibrationValue = async (frequency: 500 | 1000 | 2000 | 4000, 
       is_calibrated_2000: values2000.length > 0,
       is_calibrated_4000: values4000.length > 0,
       user_id: user.id,
-      updated_at: new Date().toISOString(),
+      updated_at: currentDate,
+      last_calibration_date: currentDate,
     };
 
     console.log('Calibration record to save:', calibrationRecord);
@@ -175,6 +180,7 @@ export const loadCalibrationData = async (): Promise<CalibrationData | null> => 
       referenceDb1000Values: data.reference_db_1000_values || [],
       referenceDb2000Values: data.reference_db_2000_values || [],
       referenceDb4000Values: data.reference_db_4000_values || [],
+      lastCalibrationDate: data.last_calibration_date,
     };
     
     console.log('Loaded calibration data:', result);

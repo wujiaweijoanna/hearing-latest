@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Mic, Volume, Circle, CircleCheck, VolumeX, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCalibrationDate } from '@/lib/utils';
 
 const EnvironmentCheck = () => {
   const { 
@@ -726,6 +727,16 @@ const EnvironmentCheck = () => {
                 Click "Play Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until the first time you cannot hear the sound, then click Save.
                 The system will store your last 3 calibration values and use the minimum as your reference threshold.
               </p>
+            </div>
+
+            {/* Last Calibration Date Display */}
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Last Calibration:</span>
+                <span className="text-sm text-gray-600">
+                  {formatCalibrationDate(calibrationData.lastCalibrationDate)}
+                </span>
+              </div>
             </div>
             
             {/* Row 1: 500Hz and 1000Hz */}
