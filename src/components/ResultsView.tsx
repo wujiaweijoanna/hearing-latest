@@ -185,7 +185,7 @@ const ResultsView = () => {
               <CardTitle className={hasFailedFrequency ? 'text-red-700' : 'text-green-700'}>
                 Hearing Screening Results: {hasFailedFrequency ? 'REFER' : 'PASS'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="mt-3">
                 {hasFailedFrequency 
                   ? 'One or more frequencies exceeded the 30 dB threshold. Referral recommended.'
                   : 'All frequencies passed at 30 dB HL threshold.'
