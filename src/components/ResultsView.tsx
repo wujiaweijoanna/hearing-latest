@@ -1,6 +1,6 @@
 import React, {useRef, useEffect, useState} from 'react';
 import { useTest } from '../context/TestContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Audiogram from './Audiogram';
 import { toast } from 'sonner';
@@ -185,17 +185,6 @@ const ResultsView = () => {
               <CardTitle className={hasFailedFrequency ? 'text-red-700' : 'text-green-700'}>
                 Hearing Screening Results: {hasFailedFrequency ? 'REFER' : 'PASS'}
               </CardTitle>
-              <CardDescription className="mt-3">
-                {hasFailedFrequency 
-                  ? 'One or more frequencies exceeded the 30 dB threshold. Referral recommended.'
-                  : 'All frequencies passed at 30 dB HL threshold.'
-                }
-              </CardDescription>
-            </div>
-            <div className={`text-xl font-bold pt-2 pb-6 px-4 rounded-md flex items-start ${
-              hasFailedFrequency ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-            }`}>
-              {hasFailedFrequency ? 'REFER' : 'PASS'}
             </div>
           </div>
         </CardHeader>
