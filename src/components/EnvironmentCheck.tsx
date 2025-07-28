@@ -724,8 +724,7 @@ const EnvironmentCheck = () => {
           <div className="space-y-4">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-800">
-                Click "Play Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until the first time you cannot hear the sound, then click Save.
-                The system will store your last calibration value and use it directly as your reference threshold.
+                Use the + and - buttons to adjust the volume until the first time you cannot hear the sound, then click Save. The system will store your last calibration value and use it as your reference threshold.
               </p>
             </div>
 
