@@ -25,7 +25,7 @@ interface CalibrationData {
   isCalibrated1000: boolean;
   isCalibrated2000: boolean;
   isCalibrated4000: boolean;
-  // Arrays to store the latest 3 values for each frequency
+  // Store only the last calibration value for each frequency
   referenceDb500Values: number[];
   referenceDb1000Values: number[];
   referenceDb2000Values: number[];

@@ -725,7 +725,7 @@ const EnvironmentCheck = () => {
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-800">
                 Click "Play Tone" to start the continuous tone. Use the + and - buttons to adjust the volume until the first time you cannot hear the sound, then click Save.
-                The system will store your last 3 calibration values and use the minimum as your reference threshold.
+                The system will store your last calibration value and use it directly as your reference threshold.
               </p>
             </div>
 
@@ -755,9 +755,9 @@ const EnvironmentCheck = () => {
                     <Minus className="h-4 w-4" />
                   </Button>
                   
-                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb500}
-                  </div> */}
+                  </div>
                   
                   <Button 
                     variant="outline"
@@ -826,9 +826,9 @@ const EnvironmentCheck = () => {
                     <Minus className="h-4 w-4" />
                   </Button>
                   
-                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb}
-                  </div> */}
+                  </div>
                   
                   <Button 
                     variant="outline"
@@ -900,9 +900,9 @@ const EnvironmentCheck = () => {
                     <Minus className="h-4 w-4" />
                   </Button>
                   
-                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb2000}
-                  </div> */}
+                  </div>
                   
                   <Button 
                     variant="outline"
@@ -971,9 +971,9 @@ const EnvironmentCheck = () => {
                     <Minus className="h-4 w-4" />
                   </Button>
                   
-                  {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
+                  <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
                     {calibrationDb4000}
-                  </div> */}
+                  </div>
                   
                   <Button 
                     variant="outline"

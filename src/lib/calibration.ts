@@ -14,7 +14,7 @@ interface CalibrationData {
   isCalibrated1000: boolean;
   isCalibrated2000: boolean;
   isCalibrated4000: boolean;
-  // Arrays to store the latest 3 values for each frequency
+  // Store only the last calibration value for each frequency
   referenceDb500Values: number[];
   referenceDb1000Values: number[];
   referenceDb2000Values: number[];
@@ -23,15 +23,14 @@ interface CalibrationData {
   lastCalibrationDate: string | null;
 }
 
-// Helper function to add a new value to an array and keep only the latest 3
-const addToCalibrationArray = (currentArray: number[], newValue: number): number[] => {
-  const updatedArray = [...currentArray, newValue];
-  return updatedArray.slice(-3); // Keep only the latest 3 values
+// Helper function to store only the last calibration value
+const storeLastCalibrationValue = (newValue: number): number[] => {
+  return [newValue]; // Store only the latest value
 };
 
-// Helper function to get the minimum value from an array
-const getMinimumValue = (values: number[]): number | null => {
-  return values.length > 0 ? Math.min(...values) : null;
+// Helper function to get the last calibration value
+const getLastCalibrationValue = (values: number[]): number | null => {
+  return values.length > 0 ? values[values.length - 1] : null;
 };
 
 export const saveCalibrationValue = async (frequency: 500 | 1000 | 2000 | 4000, value: number): Promise<void> => {
@@ -55,33 +54,33 @@ export const saveCalibrationValue = async (frequency: 500 | 1000 | 2000 | 4000, 
       throw fetchError;
     }
 
-    // Initialize arrays from existing data or create new ones
+    // Initialize values with only the new calibration value
     let values500 = existingData?.reference_db_500_values || [];
     let values1000 = existingData?.reference_db_1000_values || [];
     let values2000 = existingData?.reference_db_2000_values || [];
     let values4000 = existingData?.reference_db_4000_values || [];
 
-    // Add new value to the appropriate array
+    // Store only the new value for the appropriate frequency
     switch (frequency) {
       case 500:
-        values500 = addToCalibrationArray(values500, value);
+        values500 = storeLastCalibrationValue(value);
         break;
       case 1000:
-        values1000 = addToCalibrationArray(values1000, value);
+        values1000 = storeLastCalibrationValue(value);
         break;
       case 2000:
-        values2000 = addToCalibrationArray(values2000, value);
+        values2000 = storeLastCalibrationValue(value);
         break;
       case 4000:
-        values4000 = addToCalibrationArray(values4000, value);
+        values4000 = storeLastCalibrationValue(value);
         break;
     }
 
-    // Calculate applied values (minimum of each array)
-    const appliedDb500 = getMinimumValue(values500);
-    const appliedDb1000 = getMinimumValue(values1000);
-    const appliedDb2000 = getMinimumValue(values2000);
-    const appliedDb4000 = getMinimumValue(values4000);
+    // Applied values are now the same as the last calibration value
+    const appliedDb500 = getLastCalibrationValue(values500);
+    const appliedDb1000 = getLastCalibrationValue(values1000);
+    const appliedDb2000 = getLastCalibrationValue(values2000);
+    const appliedDb4000 = getLastCalibrationValue(values4000);
 
     const currentDate = new Date().toISOString();
 
