@@ -748,11 +748,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 active:bg-red-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={decreaseDb500}
                     disabled={calibrationDb500 <= 0}
                   >
-                    -
+                    <Minus className="h-4 w-4" />
                   </Button>
                   
                   {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
@@ -762,11 +762,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-400 active:bg-blue-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={increaseDb500}
                     disabled={calibrationDb500 >= 80}
                   >
-                    +
+                    <Plus className="h-4 w-4" />
                   </Button>
 
                   {!isPlaying500 ? (
@@ -819,11 +819,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 active:bg-red-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={decreaseDb}
                     disabled={calibrationDb <= 0}
                   >
-                    -
+                    <Minus className="h-4 w-4" />
                   </Button>
                   
                   {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
@@ -833,11 +833,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-400 active:bg-blue-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={increaseDb}
                     disabled={calibrationDb >= 80}
                   >
-                    +
+                    <Plus className="h-4 w-4" />
                   </Button>
 
                   {!isPlaying ? (
@@ -893,11 +893,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 active:bg-red-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={decreaseDb2000}
                     disabled={calibrationDb2000 <= 0}
                   >
-                    -
+                    <Minus className="h-4 w-4" />
                   </Button>
                   
                   {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
@@ -907,11 +907,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-400 active:bg-blue-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={increaseDb2000}
                     disabled={calibrationDb2000 >= 80}
                   >
-                    +
+                    <Plus className="h-4 w-4" />
                   </Button>
 
                   {!isPlaying2000 ? (
@@ -964,11 +964,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 active:bg-red-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={decreaseDb4000}
                     disabled={calibrationDb4000 <= 0}
                   >
-                    -
+                    <Minus className="h-4 w-4" />
                   </Button>
                   
                   {/* <div className="px-2 py-1 bg-gray-100 rounded-md min-w-[50px] text-center font-medium text-sm">
@@ -978,11 +978,11 @@ const EnvironmentCheck = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-400 active:bg-blue-200 active:scale-95 transition-all duration-150 font-semibold shadow-sm hover:shadow-md"
                     onClick={increaseDb4000}
                     disabled={calibrationDb4000 >= 80}
                   >
-                    +
+                    <Plus className="h-4 w-4" />
                   </Button>
 
                   {!isPlaying4000 ? (
