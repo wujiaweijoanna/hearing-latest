@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -136,10 +135,11 @@
   display: none !important;
 }
 
-.pdf-export .audiogram-data-point {
-  display: none !important;
-}
-
 .pdf-export .audiogram-line {
   display: block !important;
+}
+
+/* Fix positioning shift for audiogram data points in PDF export */
+.pdf-export .audiogram-data-point {
+  transform: translate(-25%, -42%) !important;
 }
